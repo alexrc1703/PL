@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-
+/*
 
     struct Author {
         char* name;
@@ -21,7 +21,7 @@
     typedef struct file {
         char* name;
         char* path;
-    } *File
+    } *File;
 
     void initAuthor() {
         author.name = (char*) calloc(64,sizeof(char*));
@@ -29,31 +29,41 @@
     }
 
     void initTree() {
-        tree.files = noticia.text = (char**) calloc(1024,sizeof(char**));
+        tree.files = (char**) calloc(1024,sizeof(char**));
     }
 
     void initFile() {
-        file.name = (char*) calloc(64,sizeof(char*));
-        file.path = (char*) calloc(1024,sizeof(char*));
+        file->name = (char**) calloc(64,sizeof(char*));
+        file->path = (char**) calloc(1024,sizeof(char*));
     }
 
     
-
+*/
 %}
 
-
-
 /* Abreviaturas de ER */
+%%
+
 
 headers ^===\s\S+$
 
-name \{\%name\%\}
+names \{\%name\%\}
 
-/* MAIN */
 
-int main(int argc, char *argv[])
+
+
+
+%%
+int main(int argc, char *argv[]){
+
+if(argc>1)
 {
-    yyin = fopen(argv[1], "r");
-    yylex();
-    fclose(yyin);
+yylex();   
+}
+
+else {
+        return -1;
+    }
+   
+    return 1;
 }
