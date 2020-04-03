@@ -52,6 +52,7 @@ nome \{\%name\%\}
 {arvore} { printf("válido: %s\n", yytext); }
 %%
 
+%%
 
 
 int main()

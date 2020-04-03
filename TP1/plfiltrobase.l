@@ -4,10 +4,10 @@
 
         /* Abreviaturas de ER */
 digito    [0-9]
-acentos   \xc3[\x80-\xbf]       
-letra     [a-zA-Z]|{acentos}       
-palavra   {letra}+         
-     
+acentos   \xc3[\x80-\xbf]
+letra     [a-zA-Z]|{acentos}
+palavra   {letra}+
+
 %%
 ER         { ECHO; /*imprime na saida ER (em geral a Expressao Regular encontrada na entrada*/}
 {digito}+  { AccaoSemantica em C; /*encontrei um NUMERO*/}
