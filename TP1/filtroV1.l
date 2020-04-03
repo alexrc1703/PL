@@ -44,15 +44,16 @@ char* temp;
     */
 %}
 
-arvore (===.+)
+arvore ===[ \t\r\n].+
 nome \{\%name\%\}
 %%
 {nome} { printf("válido: %s\n", yytext);     }
 
-{arvore} { printf("válido: %s\n", yytext); }
+{arvore} { printf("válido: %s\n", yytext+4); }
+
+.+ printf("invalido: %s\n", yytext);
 %%
 
-%%
 
 
 int main()
