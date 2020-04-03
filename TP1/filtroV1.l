@@ -37,33 +37,31 @@
         file->path = (char**) calloc(1024,sizeof(char*));
     }
 
-    
+
 */
 %}
 
 /* Abreviaturas de ER */
+HEADERS ^===\s\S+$
+
+NAME \{\%name\%\}
+
 %%
 
-
-headers ^===\s\S+$
-
-names \{\%name\%\}
-
-
-
-
-
+{HEADERS}+  {
+            printf("Header: %s", yytext);
+            }
 %%
 int main(int argc, char *argv[]){
 
-if(argc>1)
-{
-yylex();   
-}
+    if(argc>1)
+    {
+        yylex();
+    }
 
-else {
+    else {
         return -1;
     }
-   
+
     return 1;
 }
