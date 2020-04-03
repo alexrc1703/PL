@@ -6,22 +6,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 
+char* temp;
 /*
 
-    struct Author {
+    typedef struct Author {
         char* name;
         char* email;
     }author;
 
-    struct Tree {
+    typedef struct File {
+        char* name;
+        char* path;
+    }file;
+
+    typedef struct Tree {
         char** files;
     }tree;
 
-    typedef struct file {
-        char* name;
-        char* path;
-    } *File;
+  
 
     void initAuthor() {
         author.name = (char*) calloc(64,sizeof(char*));
@@ -33,37 +37,26 @@
     }
 
     void initFile() {
-        file->name = (char**) calloc(64,sizeof(char*));
-        file->path = (char**) calloc(1024,sizeof(char*));
+        (*(&file))->name = (char**) calloc(64,sizeof(char*));
+       (*(&file)->path) = (char**) calloc(1024,sizeof(char*));
     }
 
-    
-*/
+    */
 %}
 
-/* Abreviaturas de ER */
+arvore (===.+)
+nome \{\%name\%\}
+%%
+{nome} { printf("válido: %s\n", yytext);     }
+
+{arvore} { printf("válido: %s\n", yytext); }
 %%
 
 
-headers ^===\s\S+$
 
-names \{\%name\%\}
-
-
-
-
-
-%%
-int main(int argc, char *argv[]){
-
-if(argc>1)
+int main()
 {
-yylex();   
-}
 
-else {
-        return -1;
-    }
-   
-    return 1;
+    yylex();
+    return 0;
 }
