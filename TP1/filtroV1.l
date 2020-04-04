@@ -14,7 +14,8 @@ char* sectemp="nothing";
 char* email;
 char* author;
 char* progName;
-char** files;
+char* dir;
+
 /*
 
     typedef struct Author {
@@ -48,16 +49,8 @@ char** files;
     }
 
     */
-    void init() { 
-    files = calloc(1024, sizeof(char *));
-}
-     char* trim(char *s) {
-        while(isspace(*s)) s++;
-        char *back = s + strlen(s);
-        while(isspace(*--back));
-        *(back+1) = '\0';
-        return s;
-    }
+   
+
 %}
 
 arvore ===[ \t\r\n].+
@@ -87,18 +80,12 @@ nome \{\%name\%\}
 
 ^===[ \t\r\n]tree[ \t\r\n] { BEGIN DEFtree; printf("online mal comeca a tree\n");}
 <DEFtree>{
-    <*>[ \t\r\n].* {
-        /* fazer esta parte */
-                    temp = trim(strdup(yytext));
+    <*>temp:.* {
+        /* apanha a seguir ao espaco*/
+                    temp = (strdup(yytext));
                     printf("string: %s\n", temp);
                     
-                    files[0]=strdup(strtok(temp,"\n"));
-                    int i=1;
-                    while(temp!=NULL){
-                        
-                        files[i]=strdup(strtok(NULL,"\n"));
-                        i++;
-                    }
+                    mkdir("~/Makefile", 0700);
                     
                 }
 
@@ -118,10 +105,21 @@ nome \{\%name\%\}
 
 
 
-int main()
+int main(int argc, char** argv)
 {
-   
-    yylex();
-    init();
-    return 0;
+   if(argc>1){
+        
+        dir=strdup(argv[1]);
+        printf("nome do diretorio %s\n",dir);
+        yyin = fopen(argv[2], "r");
+
+        yylex();  
+		
+	    
+        fclose(yyin);  
+    } 
+    else { 
+        return -1; 
+    }
+    return 1;
 }

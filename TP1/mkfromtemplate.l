@@ -61,17 +61,10 @@ nome \{\%name\%\}
 
 ^===[ \t\r\n]tree[ \t\r\n] { BEGIN DEFtree; }
 <DEFtree>{
-    <*>temp:.* {
-        /* apanha a seguir ao espaco*/
-                    temp = (strdup(yytext));
-                    printf("string: %s\n", temp);
-                    
-                    mkdir("~/Makefile", 0700);
-                    
-                }
-
+<*>temp.* { (strdup(yytext)); sprintf("string: %s\n", temp);}
 }
-<DEFtree>^[ \t\r\n]===[ \t\r\n]Makefile[ \t\r\n] { BEGIN INITIAL;}
+
+<DEFtree>^[ \t\r\n]===[ \t\r\n] { BEGIN INITIAL;printf("sai da tree");}
 
 %%
 int main(int argc, char** argv)
