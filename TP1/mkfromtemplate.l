@@ -44,17 +44,15 @@ nome \{\%name\%\}
 <DEFmeta>{
     <*>email:.* {
                     author.email = strdup(yytext+6);
-                    
                 }
     <*>author:.* {
                     author.name= strdup(yytext+8);
-                    
                 }
 }
 
-<DEFmeta>^===[ \t\r\n]tree[ \t\r\n] { 
-                                        BEGIN INITIAL; 
-                                        printf("EMAIL: %s\n", author.email); 
+<DEFmeta>^===[ \t\r\n]tree[ \t\r\n] {
+                                        BEGIN INITIAL;
+                                        printf("EMAIL: %s\n", author.email);
                                         printf("AUTHOR: %s\n", author.name);
                                     }
 
