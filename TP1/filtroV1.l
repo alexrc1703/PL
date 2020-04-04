@@ -43,13 +43,6 @@ char* sectemp="nothing";
     }
 
     */
-    char* trim(char *s) {
-        while(isspace(*s)) s++;
-        char *back = s + strlen(s);
-        while(isspace(*--back));
-        *(back+1) = '\0';
-        return s;
-    }
 %}
 
 arvore ===[ \t\r\n].+
@@ -68,13 +61,10 @@ nome \{\%name\%\}
 <DEFmeta>.* {  
                 //temp=strdup(yytext+6);
                 //printf("imprimo EMAIL: %s !em livestream\n", (temp));
-                //email: sectemp=strdup(yytext);printf("email: %s",sectemp);
+                email: sectemp=strdup(yytext+6);printf("EMAIL: %s\n",sectemp);
 
-                author: {
-                        temp=strdup(yytext); 
-                        sectemp=strtok(temp+7,".");
-                        printf("author: %s",sectemp);
-                }
+                author: temp=strdup(yytext+7); printf("AUTHOR: %s\n",temp);
+            fazer com tokens
 }
 
 {nome} { printf("válido: %s\n", yytext); }
