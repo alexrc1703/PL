@@ -1,23 +1,33 @@
 %option noyywrap
-%{
-    #include <string.h>
-    #include <stdio.h>
-    #include <stdlib.h>
-    #include <ctype.h>
 
-    /* struct Author {
+%{
+/* Declaracoes C diversas */
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+char* email;
+char* author;
+char* progName;
+/*
+
+    typedef struct Author {
         char* name;
         char* email;
     }author;
 
-    struct Tree {
+    typedef struct File {
+        char* name;
+        char* path;
+    }file;
+
+    typedef struct Tree {
         char** files;
     }tree;
 
-    typedef struct file {
-        char* name;
-        char* path;
-    } *File
+  
 
     void initAuthor() {
         author.name = (char*) calloc(64,sizeof(char*));
@@ -25,30 +35,45 @@
     }
 
     void initTree() {
-        tree.files = noticia.text = (char**) calloc(1024,sizeof(char**));
+        tree.files = (char**) calloc(1024,sizeof(char**));
     }
 
     void initFile() {
-        file.name = (char*) calloc(64,sizeof(char*));
-        file.path = (char*) calloc(1024,sizeof(char*));
-    } */
+        (*(&file))->name = (char**) calloc(64,sizeof(char*));
+       (*(&file)->path) = (char**) calloc(1024,sizeof(char*));
+    }
 
-    char* progName;
+    */
+    char* trim(char *s) {
+        while(isspace(*s)) s++;
+        char *back = s + strlen(s);
+        while(isspace(*--back));
+        *(back+1) = '\0';
+        return s;
+    }
 %}
 
-%x METADATA
-/* Abreviaturas de ER */
-/* HEADERS ===.* */
+arvore ===[ \t\r\n].+
+NAME \{\%name\%\}
+%x DEFmeta DEFtree
 
-/* LINE [^.\n].* */
-
-/* NAME \{\%name\%\} */
 
 %%
 
-===  {BEGIN METADATA;}
+^===[ \t\r\n]meta[ \t\r\n] { BEGIN DEFmeta;}
 
-<METADATA> { printf("-------- cenas");}
+<DEFmeta>{
+    <*>email:.* {
+                    email = strdup(yytext+7);
+                    printf("EMAIL: %s\n", email);
+                }
+    <*>author:.* {
+                    author = strdup(yytext+8);
+                    printf("AUTHOR: %s\n", author);
+                }
+}
+
+<DEFmeta>^===[ \t\r\n]tree[ \t\r\n] { printf("GO TREE!\n"); }
 
 %%
 
@@ -58,7 +83,6 @@ int main(int argc, char* argv[]){
         const size_t strLen = strlen(argv[1]) + 1;
         progName = malloc(strLen);
         strncpy(progName, argv[1], strLen);
-        printf("%s --------------------------- progName \n", progName);
     }
     else {
         return 1;
