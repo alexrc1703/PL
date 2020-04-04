@@ -1,4 +1,4 @@
-%option noyywrap
+
 
 %{
 /* Declaracoes C diversas */
@@ -10,6 +10,11 @@
 
 char* temp="nada";
 char* sectemp="nothing";
+
+char* email;
+char* author;
+char* progName;
+char** files;
 /*
 
     typedef struct Author {
@@ -47,33 +52,59 @@ char* sectemp="nothing";
 
 arvore ===[ \t\r\n].+
 nome \{\%name\%\}
-%x DEFmeta
+%x DEFmeta DEFtree
 
 
 %%
-^===[ \t\r\n]meta[ \t\r\n] {
-    BEGIN DEFmeta;
-    printf("online mal comeca a sc\n");
+<*>.|\n
+^===[ \t\r\n]meta[ \t\r\n] { BEGIN DEFmeta;printf("online mal comeca a sc\n");}
 
+<DEFmeta>{
+    <*>email:.* {
+                    email = strdup(yytext+7);
+                    printf("EMAIL: %s\n", email);
+                }
+    <*>author:.* {
+                    author = strdup(yytext+8);
+                    printf("AUTHOR: %s\n", author);
+                }
 
-    }
-<DEFmeta>^===[ \t\r\n]tree {BEGIN INITIAL;printf("imprimo email: %s nome: %s quando saio de sc\n", (temp),(sectemp));}
-<DEFmeta>.* {
-                //temp=strdup(yytext+6);
-                //printf("imprimo EMAIL: %s !em livestream\n", (temp));
-                email: sectemp=strdup(yytext+6);printf("EMAIL: %s\n",sectemp);
-
-                author: temp=strdup(yytext+7); printf("AUTHOR: %s\n",temp);
-            fazer com tokens
 }
+
+<DEFmeta>^===[ \t\r\n]tree[ \t\r\n] { BEGIN INITIAL;printf("saiu de sc"); printf("GO TREE!\n");printf("EMAIL: %s\n", email); printf("AUTHOR: %s\n", author);}
+
+
+
+^===[ \t\r\n]tree[ \t\r\n] { BEGIN DEFtree; printf("online mal comeca a tree\n");}
+<DEFtree>{
+    <*>[ \t\r\n].* {
+        /* fazer esta parte */
+                    temp = strdup(yytext);
+                    printf("string: %s\n", temp);
+                    while(temp!='\0'){
+                        int i=0;
+                        file+i=strdup(strtok(temp)
+                        
+                    }
+                    
+                }
+
+}
+<DEFtree>^[ \t\r\n]===[ \t\r\n]Makefile[ \t\r\n] { BEGIN INITIAL;printf("saiu de tree %s",temp);}
+
 
 {nome} { printf("válido: %s\n", yytext); }
 
 
-.|\n {}
+
+
+<<EOF>>   { return 0 ; } 
 
 %%
 
+int yywrap(){
+    return(1);
+}
 
 
 int main()
