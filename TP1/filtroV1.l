@@ -8,7 +8,8 @@
 #include <ctype.h>
 #include <string.h>
 
-char* temp;
+char* temp="nada";
+char* sectemp="nothing";
 /*
 
     typedef struct Author {
@@ -42,16 +43,45 @@ char* temp;
     }
 
     */
+    char* trim(char *s) {
+        while(isspace(*s)) s++;
+        char *back = s + strlen(s);
+        while(isspace(*--back));
+        *(back+1) = '\0';
+        return s;
+    }
 %}
 
 arvore ===[ \t\r\n].+
 nome \{\%name\%\}
+%x DEFmeta
+
+
 %%
-{nome} { printf("válido: %s\n", yytext);     }
+^===[ \t\r\n]meta[ \t\r\n] { 
+    BEGIN DEFmeta;
+    printf("online mal comeca a sc\n");
+    
+    
+    }
+<DEFmeta>^===[ \t\r\n]tree {BEGIN INITIAL;printf("imprimo email: %s nome: %s quando saio de sc\n", (temp),(sectemp));}
+<DEFmeta>.* {  
+                //temp=strdup(yytext+6);
+                //printf("imprimo EMAIL: %s !em livestream\n", (temp));
+                //email: sectemp=strdup(yytext);printf("email: %s",sectemp);
 
-{arvore} { printf("válido: %s\n", yytext+4); }
+                author: {
+                        temp=strdup(yytext); 
+                        sectemp=strtok(temp+7,".");
+                        printf("author: %s",sectemp);
+                }
+}
 
-.+ printf("invalido: %s\n", yytext);
+{nome} { printf("válido: %s\n", yytext); }
+
+
+.|\n {}
+
 %%
 
 
