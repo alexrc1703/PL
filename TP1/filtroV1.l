@@ -1,4 +1,4 @@
-
+%option noyywrap
 
 %{
 /* Declaracoes C diversas */
@@ -48,6 +48,9 @@ char** files;
     }
 
     */
+    void init() { 
+    files = calloc(1024, sizeof(char *));
+}
      char* trim(char *s) {
         while(isspace(*s)) s++;
         char *back = s + strlen(s);
@@ -89,11 +92,11 @@ nome \{\%name\%\}
                     temp = trim(strdup(yytext));
                     printf("string: %s\n", temp);
                     
-                    *files=strdup(strtok(temp,"\n"));
+                    files[0]=strdup(strtok(temp,"\n"));
                     int i=1;
                     while(temp!=NULL){
                         
-                        *(files+i)=strdup(strtok(NULL,"\n"));
+                        files[i]=strdup(strtok(NULL,"\n"));
                         i++;
                     }
                     
@@ -112,14 +115,13 @@ nome \{\%name\%\}
 
 %%
 
-int yywrap(){
-    return(1);
-}
+
 
 
 int main()
 {
-
+   
     yylex();
+    init();
     return 0;
 }
