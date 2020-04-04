@@ -58,20 +58,20 @@ nome \{\%name\%\}
 
 
 %%
-^===[ \t\r\n]meta[ \t\r\n] { 
+^===[ \t\r\n]meta[ \t\r\n] {
     BEGIN DEFmeta;
     printf("online mal comeca a sc\n");
-    
-    
+
+
     }
 <DEFmeta>^===[ \t\r\n]tree {BEGIN INITIAL;printf("imprimo email: %s nome: %s quando saio de sc\n", (temp),(sectemp));}
-<DEFmeta>.* {  
+<DEFmeta>.* {
                 //temp=strdup(yytext+6);
                 //printf("imprimo EMAIL: %s !em livestream\n", (temp));
                 //email: sectemp=strdup(yytext);printf("email: %s",sectemp);
 
                 author: {
-                        temp=strdup(yytext); 
+                        temp=strdup(yytext);
                         sectemp=strtok(temp+7,".");
                         printf("author: %s",sectemp);
                 }
