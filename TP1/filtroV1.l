@@ -48,6 +48,13 @@ char** files;
     }
 
     */
+     char* trim(char *s) {
+        while(isspace(*s)) s++;
+        char *back = s + strlen(s);
+        while(isspace(*--back));
+        *(back+1) = '\0';
+        return s;
+    }
 %}
 
 arvore ===[ \t\r\n].+
@@ -79,12 +86,15 @@ nome \{\%name\%\}
 <DEFtree>{
     <*>[ \t\r\n].* {
         /* fazer esta parte */
-                    temp = strdup(yytext);
+                    temp = trim(strdup(yytext));
                     printf("string: %s\n", temp);
-                    while(temp!='\0'){
-                        int i=0;
-                        file+i=strdup(strtok(temp)
+                    
+                    *files=strdup(strtok(temp,"\n"));
+                    int i=1;
+                    while(temp!=NULL){
                         
+                        *(files+i)=strdup(strtok(NULL,"\n"));
+                        i++;
                     }
                     
                 }
