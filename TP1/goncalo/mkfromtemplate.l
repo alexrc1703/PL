@@ -10,10 +10,9 @@
 
 char* nomeDir;
 char* temp;
-char* temp2;
-char* temp3;
-char* temp4;
-int count_line;
+int flag = 0;
+char* prevFile;
+char* thisFile;
 
 struct Author {
         char* name;
@@ -66,18 +65,28 @@ nome \{\%name\%\}
 
 <DEFmeta>.|\n {;}
 
-<DEFtree>\{\%name\%\} {printf("%s", nomeDir);}
+<DEFtree>\{\%name\%\}\/ {printf("%s\n", nomeDir);}
 
-<DEFtree>-+.*\\ {printf("Dir: %s\n", yytext);}
+<DEFtree>-+.*\/ {printf("Dir: %s\n", yytext);}
 
 <DEFtree>-+.* {printf("file: %s\n", yytext);}
 
 
 <DEFtree>^=== {BEGIN DEF;}
 
-<DEF>^===.*[\n] {printf("NOVO FILE: %s\n", yytext);}
+<DEF>^===.*[\n] {printf("NOVO FILE: %s\n", yytext+4);}
 
-<DEF>.*[\n] {printf("Cenas novas: %s\n", yytext);}
+<DEF>\{\%name\%\} {printf("%s", nomeDir);}
+
+<DEF>.*[\n] {
+                if (flag == 0) {
+                    printf("first File: %s\n", yytext);
+                    flag++;
+                }
+                else {
+                    printf("Escrever no File: %s\n", yytext);
+                }
+            }
 
 
 <*>.|\n {;}
