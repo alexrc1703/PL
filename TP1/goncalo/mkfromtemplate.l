@@ -11,8 +11,8 @@
 char* nomeDir;
 char* temp;
 int flag = 0;
-char* prevFile;
-char* thisFile;
+char *dir[100];
+int dirLvl = 0;
 
 struct Author {
         char* name;
@@ -24,19 +24,59 @@ struct File {
         char* path;
     }file;
 
-struct Direct {
-        char* name;
-        char* path;
-    }direct;
-
 struct Tree {
         char** files;
+        int size;
     }tree;
 
-    void initAuthor() {
-        author.name = (char*) calloc(64,sizeof(char*));
-        author.email = (char*) calloc(128,sizeof(char*));
+void initAuthor() {
+    author.name = (char*) calloc(64,sizeof(char*));
+    author.email = (char*) calloc(128,sizeof(char*));
+}
+
+void initTree() {
+
+}
+
+char *replaceWord(const char *s, const char *oldW, const char *newW)
+{
+    char *result;
+    int i, cnt = 0;
+    int newWlen = strlen(newW);
+    int oldWlen = strlen(oldW);
+
+    // Counting the number of times old word
+    // occur in the string
+    for (i = 0; s[i] != '\0'; i++)
+    {
+        if (strstr(&s[i], oldW) == &s[i])
+        {
+            cnt++;
+
+            // Jumping to index after the old word.
+            i += oldWlen - 1;
+        }
     }
+
+    // Making new string of enough length
+    result = (char *)malloc(i + cnt * (newWlen - oldWlen) + 1);
+
+    i = 0;
+    while (*s)
+    {
+        // compare the substring with the result
+        if (strstr(s, oldW) == s)
+        {
+            strcpy(&result[i], newW);
+            i += newWlen;
+            s += oldWlen;
+        }
+        else
+            result[i++] = *s++;
+    }
+    result[i] = '\0';
+    return result;
+}
 
 %}
 
@@ -65,26 +105,79 @@ nome \{\%name\%\}
 
 <DEFmeta>.|\n {;}
 
-<DEFtree>\{\%name\%\}\/ {printf("%s\n", nomeDir);}
+<DEFtree>\{\%name\%\}\/ {
+                            char *a = malloc(strlen(nomeDir) + 2);
+                            snprintf(a, sizeof a, "%s/", nomeDir);
+                            dir[dirLvl] = malloc(strlen(a) + 1);
+                            strcpy(dir[dirLvl], a);
+                            printf("%s\n", dir[dirLvl]);
+                        }
 
-<DEFtree>-+.*\/ {printf("Dir: %s\n", yytext);}
+<DEFtree>-+.*\/ {
+                    int aux = 0;
+                    char *token = strtok(yytext, " ");
+                    aux = strlen(token);
+                    token = strtok(NULL, " ");
+                    dirLvl = aux;
+                    dir[dirLvl] = malloc(strlen(token) + 1);
+                    char *result = NULL;
+                    result = replaceWord(token, "{%name%}", nomeDir);
+                    strcpy(dir[dirLvl], result);
+                    printf("DIR: %s, %d\n", dir[dirLvl], aux);
+                }
 
-<DEFtree>-+.* {printf("file: %s\n", yytext);}
+<DEFtree>-+.* {
+                int aux = 0;
+                int i = 0;
+                char *token = strtok(yytext, " ");
+                aux = strlen(token);
+                token = strtok(NULL, " ");
+                dirLvl = aux;
+                int total = 0;
+                while (i < dirLvl) {
+                    total += strlen(dir[i]);
+                    i++;
+                }
+                i = 0;
+                char *path0 = malloc(total + 1);
+                while(i < dirLvl) {
+                    strcat(path0,dir[i]);
+                    i++;
+                }
+                char *result = NULL;
+                result = replaceWord(token, "{%name%}", nomeDir);
+                char *pathFinal = malloc(strlen(path0) + strlen(result) + 1);
+                strcat(pathFinal,path0);
+                strcat(pathFinal,result);
+                printf("FILE: %s, %d\n", pathFinal, aux);
+              }
 
 
 <DEFtree>^=== {BEGIN DEF;}
 
-<DEF>^===.*[\n] {printf("NOVO FILE: %s\n", yytext+4);}
+<DEF>^===.*[\n] {
+    char *result = NULL;
+    result = replaceWord(yytext+4, "{%name%}", nomeDir);
+    printf("NOVO FILE: %s\n", result);
+    }
 
 <DEF>\{\%name\%\} {printf("%s", nomeDir);}
 
 <DEF>.*[\n] {
                 if (flag == 0) {
-                    printf("first File: %s\n", yytext);
+                    char *result = NULL;
+                    result = replaceWord(yytext, "{%name%}", nomeDir);
+                    result = replaceWord(result, "{%email%}", author.email);
+                    result = replaceWord(result, "{%author%}", author.name);
+                    printf("first File: %s\n", result);
                     flag++;
                 }
                 else {
-                    printf("Escrever no File: %s\n", yytext);
+                    char *result = NULL;
+                    result = replaceWord(yytext, "{%name%}", nomeDir);
+                    result = replaceWord(result, "{%email%}", author.email);
+                    result = replaceWord(result, "{%author%}", author.name);
+                    printf("Escrever no File: %s\n", result);
                 }
             }
 
