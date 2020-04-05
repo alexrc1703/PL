@@ -10,6 +10,10 @@
 
 char* nomeDir;
 char* temp;
+char* temp2;
+char* temp3;
+char* temp4;
+int count_line;
 
 struct Author {
         char* name;
@@ -20,6 +24,11 @@ struct File {
         char* name;
         char* path;
     }file;
+
+struct Direct {
+        char* name;
+        char* path;
+    }direct;
 
 struct Tree {
         char** files;
@@ -33,35 +42,38 @@ struct Tree {
 %}
 
 nome \{\%name\%\}
-%x DEFmeta DEFtree
+%x DEFmeta DEFtree DEF
 
 %%
-<*>.|\n
-^===[ \t\r\n]meta[ \t\r\n] { BEGIN DEFmeta;}
 
-<DEFmeta>{
-    <*>email:.* {
-                    author.email = strdup(yytext+7);
-                }
-    <*>author:.* {
-                    author.name= strdup(yytext+8);
-                }
+
+^===[ \t\r\n]meta[\n] {BEGIN(DEFmeta);}
+
+<DEFmeta>email: {
+     temp = strdup(yytext+7);
+     author.email=strtok(temp,"\n");
+     printf("Este é o EMAIL: %s\n", author.email);
+     free(temp);
 }
 
-<DEFmeta>^===[ \t\r\n]tree[ \t\r\n] {
-                                        BEGIN INITIAL;
-                                        printf("%s\n", author.email);
-                                        printf("%s\n", author.name);
-                                    }
-
-
-^===[ \t\r\n]tree[ \t\r\n] { BEGIN DEFtree; }
-<DEFtree>{
-    <*>^-[a-zA-Z] {printf("file\n");}
-    <*>^--[a-zA-Z] {printf("file in folder\n");}
+<DEFmeta>author: {
+     temp = strdup(yytext+8);
+     author.name=strtok(temp,"\n");
+     printf("Este é o author: %s\n", author.name);
 }
 
-<DEFtree>^[ \t\r\n]===[ \t\r\n] { BEGIN INITIAL;printf("sai da tree");}
+<DEFmeta>^===[ \t\r\n]tree[\n] {BEGIN DEFtree;}
+
+<DEFmeta>.|\n {;}
+
+<DEFtree>-+.* {printf("file: %s\n", yytext);}
+
+
+<DEFtree>^=== {BEGIN 0;}
+
+<*>.|\n {;}
+
+<<EOF>> {return 0;}
 
 %%
 int main(int argc, char** argv)
@@ -73,7 +85,6 @@ int main(int argc, char** argv)
         yyin = fopen(argv[2], "r");
 
         yylex();
-
 
         fclose(yyin);
     }
