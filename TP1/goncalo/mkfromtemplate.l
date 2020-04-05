@@ -27,6 +27,12 @@ struct File {
         char* path;
     }file;
 
+struct File * createFile(char * name, char * path) {
+    struct File *a = malloc(sizeof(struct File));
+    a->name = name;
+    a->path = path;
+    return a;
+}
 
 void initAuthor() {
     author.name = (char*) calloc(64,sizeof(char*));
@@ -87,14 +93,11 @@ nome \{\%name\%\}
 <DEFmeta>email: {
      temp = strdup(yytext+7);
      author.email=strtok(temp,"\n");
-     printf("Este é o EMAIL: %s\n", author.email);
-     free(temp);
 }
 
 <DEFmeta>author: {
      temp = strdup(yytext+8);
      author.name=strtok(temp,"\n");
-     printf("Este é o author: %s\n", author.name);
 }
 
 <DEFmeta>^===[ \t\r\n]tree[\n] {BEGIN DEFtree;}
@@ -106,7 +109,6 @@ nome \{\%name\%\}
                             snprintf(a, sizeof a, "%s/", nomeDir);
                             dir[dirLvl] = malloc(strlen(a) + 1);
                             strcpy(dir[dirLvl], a);
-                            printf("%s\n", dir[dirLvl]);
                         }
 
 <DEFtree>-+.*\/ {
@@ -119,7 +121,6 @@ nome \{\%name\%\}
                     char *result = NULL;
                     result = replaceWord(token, "{%name%}", nomeDir);
                     strcpy(dir[dirLvl], result);
-                    printf("DIR: %s, %d\n", dir[dirLvl], aux);
                 }
 
 <DEFtree>-+.* {
@@ -145,31 +146,25 @@ nome \{\%name\%\}
                 char *pathFinal = malloc(strlen(path0) + strlen(result) + 1);
                 strcat(pathFinal,path0);
                 strcat(pathFinal,result);
-                struct File a = {.name = result, .path = pathFinal};
                 totalFiles++;
                 files[totalFiles-1] = malloc(sizeof(struct File));
-                files[totalFiles-1] = &a;
-                printf("FILE: %s, %d\n", files[totalFiles-1]->path, aux);
+                files[totalFiles-1] = (createFile(result,pathFinal));
               }
 
 
 <DEFtree>^=== {BEGIN DEF;}
 
-<DEF>^===.*[\n] {
-    char *result = NULL;
-    result = replaceWord(yytext+4, "{%name%}", nomeDir);
-    int i = 0;
-    while ( i < totalFiles ) {
-        if (strcmp(files[i]->name,result)){
-            posFile = i;
-            break;
-        }
-        i++;
-    }
-    printf("NOVO FILE: %s, %s, %d, %d\n", result, files[posFile]->name, totalFiles, posFile);
-    }
-
-<DEF>\{\%name\%\} {printf("%s", nomeDir);}
+<DEF>^===[ \t\r\n].*[\n] {
+                            char *result = NULL;
+                            result = replaceWord(yytext+4, "{%name%}", nomeDir);
+                            int i = 0;
+                            char *token = strtok(result, "\n");
+                            while ( i < totalFiles) {
+                                printf("ENTAO: %d\n", strcmp(files[i]->name, result));
+                                printf("FILES: %s, %s\n", files[i]->name, result);
+                                i++;
+                            }
+                        }
 
 <DEF>.*[\n] {
                 if (flag == 0) {
@@ -177,14 +172,11 @@ nome \{\%name\%\}
                     result = replaceWord(yytext, "{%name%}", nomeDir);
                     result = replaceWord(result, "{%email%}", author.email);
                     result = replaceWord(result, "{%author%}", author.name);
-                    printf("first File: %s\n", result);
                     flag++;
                     int i = 0;
-                    while ( i < totalFiles ) {
-                        if (strcmp(files[i]->name,result)){
-                            posFile = i;
-                            break;
-                        }
+                    while ( i < totalFiles) {
+                        printf("ENTAO: %d\n", strcmp(files[i]->name, result));
+                        printf("FILES: %s\n", files[i]->name);
                         i++;
                     }
                 }
@@ -193,7 +185,11 @@ nome \{\%name\%\}
                     result = replaceWord(yytext, "{%name%}", nomeDir);
                     result = replaceWord(result, "{%email%}", author.email);
                     result = replaceWord(result, "{%author%}", author.name);
-                    printf("Escrever no File: %s\n", result);
+                    printf("escreve isto no file %s: %s", files[posFile]->name, result);
+                    /* FILE *fptr;
+                    fptr = fopen(file[posFile]->path,w);
+                    fprintf(fptr,"%s",result);
+                    fclose(fptr); */
                 }
             }
 
@@ -208,10 +204,8 @@ int main(int argc, char** argv)
    if(argc>1){
 
         nomeDir=strdup(argv[1]);
-        printf("nome do diretorio %s\n",nomeDir);
         yyin = fopen(argv[2], "r");
         yylex();
-
         fclose(yyin);
     }
     else {
