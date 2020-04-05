@@ -12,6 +12,7 @@ char* nomeDir;
 char* temp;
 char* temp2;
 char* temp3;
+char* temp4;
 
 struct Author {
         char* name;
@@ -22,6 +23,11 @@ struct File {
         char* name;
         char* path;
     }file;
+
+struct Direct {
+        char* name;
+        char* path;
+    }direct;
 
 struct Tree {
         char** files;
@@ -38,33 +44,46 @@ nome \{\%name\%\}
 %x DEFmeta DEFtree
 
 %%
-.|\n {}
+
+
 ^===[ \t\r\n]meta[\n] {BEGIN(DEFmeta);}
 
 <DEFmeta>email: {     
      temp = strdup(yytext+7);
      author.email=strtok(temp,"\n");
      printf("Este é o EMAIL: %s\n", author.email);
-     
-     
-
+     free(temp);
 }
+
 <DEFmeta>author: {     
      temp = strdup(yytext+8);
      author.name=strtok(temp,"\n");
      printf("Este é o author: %s\n", author.name);
 }
-<DEFmeta>.|\n {}
+
+<DEFmeta>.|\n {BEGIN 0;}
 
 
-corrigir a partir daqui
-^===[ \t\r\n]tree[\n] {BEGIN(DEFtree);}
-<DEFtree>name {temp = strdup(yytext+8);file.name=strtok(temp,"\n");
-     printf("Este é o author: %s\n", file.name); }
-<DEFtree>===[ \t\r\n]Makefile[\n] {
-    BEGIN(0);
-    printf("saiu de sc\n"); 
-    printf("GO make!\n");}
+
+^===[ \t\r\n]tree[\n] {BEGIN(DEFtree);printf("entrou na tree \n");}
+
+<DEFtree>^.*\/ {
+     temp2 = strdup(yytext);file.name=strtok(temp2,"\n");
+     printf("name: %s\n", file.name); 
+}
+<DEFtree>^-.* {
+    temp3 = strdup(yytext);file.path=strtok(temp2,"\n");
+    printf("subnivel1 %s\n", file.path);
+}
+
+<DEFtree>[--].* {
+    printf("sub3\n");
+    temp4 = strdup(yytext);direct.path=strtok(temp2,"\n");
+    printf("subnivel2 %s\n", direct.path);
+}
+
+<DEFtree>.|\n {}
+
 
 %%
 int main(int argc, char** argv)
