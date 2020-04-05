@@ -66,10 +66,19 @@ nome \{\%name\%\}
 
 <DEFmeta>.|\n {;}
 
+<DEFtree>\{\%name\%\} {printf("%s", nomeDir);}
+
+<DEFtree>-+.*\\ {printf("Dir: %s\n", yytext);}
+
 <DEFtree>-+.* {printf("file: %s\n", yytext);}
 
 
-<DEFtree>^=== {BEGIN 0;}
+<DEFtree>^=== {BEGIN DEF;}
+
+<DEF>^===.*[\n] {printf("NOVO FILE: %s\n", yytext);}
+
+<DEF>.*[\n] {printf("Cenas novas: %s\n", yytext);}
+
 
 <*>.|\n {;}
 
