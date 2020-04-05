@@ -12,7 +12,10 @@ char* nomeDir;
 char* temp;
 int flag = 0;
 char *dir[100];
+struct File *files[100];
 int dirLvl = 0;
+int totalFiles = 0;
+int posFile = 0;
 
 struct Author {
         char* name;
@@ -24,19 +27,12 @@ struct File {
         char* path;
     }file;
 
-struct Tree {
-        char** files;
-        int size;
-    }tree;
 
 void initAuthor() {
     author.name = (char*) calloc(64,sizeof(char*));
     author.email = (char*) calloc(128,sizeof(char*));
 }
 
-void initTree() {
-
-}
 
 char *replaceWord(const char *s, const char *oldW, const char *newW)
 {
@@ -149,7 +145,11 @@ nome \{\%name\%\}
                 char *pathFinal = malloc(strlen(path0) + strlen(result) + 1);
                 strcat(pathFinal,path0);
                 strcat(pathFinal,result);
-                printf("FILE: %s, %d\n", pathFinal, aux);
+                struct File a = {.name = result, .path = pathFinal};
+                totalFiles++;
+                files[totalFiles-1] = malloc(sizeof(struct File));
+                files[totalFiles-1] = &a;
+                printf("FILE: %s, %d\n", files[totalFiles-1]->path, aux);
               }
 
 
@@ -158,7 +158,15 @@ nome \{\%name\%\}
 <DEF>^===.*[\n] {
     char *result = NULL;
     result = replaceWord(yytext+4, "{%name%}", nomeDir);
-    printf("NOVO FILE: %s\n", result);
+    int i = 0;
+    while ( i < totalFiles ) {
+        if (strcmp(files[i]->name,result)){
+            posFile = i;
+            break;
+        }
+        i++;
+    }
+    printf("NOVO FILE: %s, %s, %d, %d\n", result, files[posFile]->name, totalFiles, posFile);
     }
 
 <DEF>\{\%name\%\} {printf("%s", nomeDir);}
@@ -171,6 +179,14 @@ nome \{\%name\%\}
                     result = replaceWord(result, "{%author%}", author.name);
                     printf("first File: %s\n", result);
                     flag++;
+                    int i = 0;
+                    while ( i < totalFiles ) {
+                        if (strcmp(files[i]->name,result)){
+                            posFile = i;
+                            break;
+                        }
+                        i++;
+                    }
                 }
                 else {
                     char *result = NULL;
@@ -194,7 +210,6 @@ int main(int argc, char** argv)
         nomeDir=strdup(argv[1]);
         printf("nome do diretorio %s\n",nomeDir);
         yyin = fopen(argv[2], "r");
-
         yylex();
 
         fclose(yyin);
