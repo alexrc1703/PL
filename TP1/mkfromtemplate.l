@@ -46,9 +46,9 @@ nome \{\%name\%\}
 %%
 
 
-^===[ \t\r\n]meta[\n] {BEGIN(DEFmeta);}
+^===[ \t\r\n]meta[\n] {BEGIN DEFmeta;}
 
-<DEFmeta>email: {     
+<DEFmeta>email: {
      temp = strdup(yytext+7);
      author.email=strtok(temp,"\n");
      printf("Este é o EMAIL: %s\n", author.email);
@@ -59,30 +59,14 @@ nome \{\%name\%\}
      temp = strdup(yytext+8);
      author.name=strtok(temp,"\n");
      printf("Este é o author: %s\n", author.name);
+     
 }
 
-<DEFmeta>.|\n {BEGIN 0;}
 
+<DEFmeta> {BEGIN DEFtree;}
 
+.|\n {}
 
-^===[ \t\r\n]tree[\n] {BEGIN(DEFtree);printf("entrou na tree \n");}
-
-<DEFtree>^.*\/ {
-     temp2 = strdup(yytext);file.name=strtok(temp2,"\n");
-     printf("name: %s\n", file.name); 
-}
-<DEFtree>^-.* {
-    temp3 = strdup(yytext);file.path=strtok(temp2,"\n");
-    printf("subnivel1 %s\n", file.path);
-}
-
-<DEFtree>[--].* {
-    printf("sub3\n");
-    temp4 = strdup(yytext);direct.path=strtok(temp2,"\n");
-    printf("subnivel2 %s\n", direct.path);
-}
-
-<DEFtree>.|\n {}
 
 
 %%
