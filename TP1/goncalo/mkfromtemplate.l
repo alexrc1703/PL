@@ -1,92 +1,84 @@
 %option noyywrap
 
 %{
-/* Declaracoes C diversas */
+    /* Declaracoes C diversas */
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
 
-char* email;
-char* author;
-char* progName;
-/*
+char* nomeDir;
+char* temp;
 
-    typedef struct Author {
+struct Author {
         char* name;
         char* email;
     }author;
 
-    typedef struct File {
+struct File {
         char* name;
         char* path;
     }file;
 
-    typedef struct Tree {
+struct Tree {
         char** files;
     }tree;
-
-  
 
     void initAuthor() {
         author.name = (char*) calloc(64,sizeof(char*));
         author.email = (char*) calloc(128,sizeof(char*));
     }
 
-    void initTree() {
-        tree.files = (char**) calloc(1024,sizeof(char**));
-    }
-
-    void initFile() {
-        (*(&file))->name = (char**) calloc(64,sizeof(char*));
-       (*(&file)->path) = (char**) calloc(1024,sizeof(char*));
-    }
-
-    */
-    char* trim(char *s) {
-        while(isspace(*s)) s++;
-        char *back = s + strlen(s);
-        while(isspace(*--back));
-        *(back+1) = '\0';
-        return s;
-    }
 %}
 
-arvore ===[ \t\r\n].+
-NAME \{\%name\%\}
+nome \{\%name\%\}
 %x DEFmeta DEFtree
 
-
 %%
-
+<*>.|\n
 ^===[ \t\r\n]meta[ \t\r\n] { BEGIN DEFmeta;}
 
 <DEFmeta>{
     <*>email:.* {
-                    email = strdup(yytext+7);
-                    printf("EMAIL: %s\n", email);
+                    author.email = strdup(yytext+7);
                 }
     <*>author:.* {
-                    author = strdup(yytext+8);
-                    printf("AUTHOR: %s\n", author);
+                    author.name= strdup(yytext+8);
                 }
 }
 
-<DEFmeta>^===[ \t\r\n]tree[ \t\r\n] { printf("GO TREE!\n"); }
+<DEFmeta>^===[ \t\r\n]tree[ \t\r\n] {
+                                        BEGIN INITIAL;
+                                        printf("%s\n", author.email);
+                                        printf("%s\n", author.name);
+                                    }
+
+
+^===[ \t\r\n]tree[ \t\r\n] { BEGIN DEFtree; }
+<DEFtree>{
+    <*>^-[a-zA-Z] {printf("file\n");}
+    <*>^--[a-zA-Z] {printf("file in folder\n");}
+}
+
+<DEFtree>^[ \t\r\n]===[ \t\r\n] { BEGIN INITIAL;printf("sai da tree");}
 
 %%
+int main(int argc, char** argv)
+{
+   if(argc>1){
 
-int main(int argc, char* argv[]){
-    if(argc>1){
+        nomeDir=strdup(argv[1]);
+        printf("nome do diretorio %s\n",nomeDir);
         yyin = fopen(argv[2], "r");
-        const size_t strLen = strlen(argv[1]) + 1;
-        progName = malloc(strLen);
-        strncpy(progName, argv[1], strLen);
+
+        yylex();
+
+
+        fclose(yyin);
     }
     else {
-        return 1;
+        return -1;
     }
-    yylex();
-    return 0;
+    return 1;
 }
