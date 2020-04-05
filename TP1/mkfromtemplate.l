@@ -38,33 +38,33 @@ nome \{\%name\%\}
 %x DEFmeta DEFtree
 
 %%
-<*>.|\n
-^===[ \t\r\n]meta[ \t\r\n] { BEGIN DEFmeta;}
+.|\n {}
+^===[ \t\r\n]meta[\n] {BEGIN(DEFmeta);}
 
-<DEFmeta>{
-    <*>email:.* {
-                    author.email = strdup(yytext+6);
-                    
-                }
-    <*>author:.* {
-                    author.name= strdup(yytext+8);
-                    
-                }
+<DEFmeta>email: {     
+     temp = strdup(yytext+7);
+     author.email=strtok(temp,"\n");
+     printf("Este é o EMAIL: %s\n", author.email);
+     
+     
+
 }
-
-<DEFmeta>^===[ \t\r\n]tree[ \t\r\n] { 
-                                        BEGIN INITIAL; 
-                                        printf("EMAIL: %s\n", author.email); 
-                                        printf("AUTHOR: %s\n", author.name);
-                                    }
-
-
-^===[ \t\r\n]tree[ \t\r\n] { BEGIN DEFtree; }
-<DEFtree>{
-<*>temp.* { (strdup(yytext)); sprintf("string: %s\n", temp);}
+<DEFmeta>author: {     
+     temp = strdup(yytext+8);
+     author.name=strtok(temp,"\n");
+     printf("Este é o author: %s\n", author.name);
 }
+<DEFmeta>.|\n {}
 
-<DEFtree>^[ \t\r\n]===[ \t\r\n] { BEGIN INITIAL;printf("sai da tree");}
+
+corrigir a partir daqui
+^===[ \t\r\n]tree[\n] {BEGIN(DEFtree);}
+<DEFtree>name {temp = strdup(yytext+8);file.name=strtok(temp,"\n");
+     printf("Este é o author: %s\n", file.name); }
+<DEFtree>===[ \t\r\n]Makefile[\n] {
+    BEGIN(0);
+    printf("saiu de sc\n"); 
+    printf("GO make!\n");}
 
 %%
 int main(int argc, char** argv)
