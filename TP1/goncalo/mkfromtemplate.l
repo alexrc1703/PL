@@ -154,14 +154,15 @@ nome \{\%name\%\}
 
 <DEFtree>^=== {BEGIN DEF;}
 
-<DEF>^===[ \t\r\n].*[\n] {
+<DEF>^===.*[\n] {
                             char *result = NULL;
                             result = replaceWord(yytext+4, "{%name%}", nomeDir);
                             int i = 0;
                             char *token = strtok(result, "\n");
                             while ( i < totalFiles) {
-                                printf("ENTAO: %d\n", strcmp(files[i]->name, result));
-                                printf("FILES: %s, %s\n", files[i]->name, result);
+                                if(strcmp(files[i]->name, result) == 0){
+                                    posFile = i;
+                                }
                                 i++;
                             }
                         }
@@ -169,14 +170,16 @@ nome \{\%name\%\}
 <DEF>.*[\n] {
                 if (flag == 0) {
                     char *result = NULL;
-                    result = replaceWord(yytext, "{%name%}", nomeDir);
+                    result = replaceWord(yytext+1, "{%name%}", nomeDir);
                     result = replaceWord(result, "{%email%}", author.email);
                     result = replaceWord(result, "{%author%}", author.name);
                     flag++;
                     int i = 0;
+                    char *token = strtok(result, "\n");
                     while ( i < totalFiles) {
-                        printf("ENTAO: %d\n", strcmp(files[i]->name, result));
-                        printf("FILES: %s\n", files[i]->name);
+                        if(strcmp(files[i]->name, token) == 0){
+                            posFile = i;
+                        }
                         i++;
                     }
                 }
