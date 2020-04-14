@@ -7,15 +7,16 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <sys/stat.h>
 
-char* nomeDir;
+char* nomeDir; // Nome do Projecto
 char* temp;
-int flag = 0;
-char *dir[100];
-struct File *files[100];
-int dirLvl = 0;
-int totalFiles = 0;
-int posFile = 0;
+int flag = 0;   // flag que permite saber se é o primeiro file ou nao
+char *dir[100]; // Array de diretorias que formam o path de cada ficheiro
+struct File *files[100]; // lista de ficheiros
+int dirLvl = 0; // Nivel das diretorias
+int totalFiles = 0; // Numero total de ficheiros
+int posFile = 0; // Posiçao do ficheiro
 
 struct Author {
         char* name;
@@ -39,7 +40,7 @@ void initAuthor() {
     author.email = (char*) calloc(128,sizeof(char*));
 }
 
-
+// Função auxiliar filtar as variaveis
 char *replaceWord(const char *s, const char *oldW, const char *newW)
 {
     char *result;
@@ -109,18 +110,34 @@ nome \{\%name\%\}
                             snprintf(a, sizeof a, "%s/", nomeDir);
                             dir[dirLvl] = malloc(strlen(a) + 1);
                             strcpy(dir[dirLvl], a);
+                            mkdir(nomeDir, 0700);
                         }
 
 <DEFtree>-+.*\/ {
+                    // Acaba em \ logo é uma diretoria
                     int aux = 0;
                     char *token = strtok(yytext, " ");
                     aux = strlen(token);
                     token = strtok(NULL, " ");
                     dirLvl = aux;
+
+                    // Adicionar a nova diretoria no respetivo nivel
                     dir[dirLvl] = malloc(strlen(token) + 1);
                     char *result = NULL;
                     result = replaceWord(token, "{%name%}", nomeDir);
                     strcpy(dir[dirLvl], result);
+
+                    // Criar a diretoria
+                    int pathTam = 0;
+                    for(int i = 0; i<=dirLvl ; i++) {
+                        pathTam += strlen(dir[i]);
+                    }
+                    char *path = malloc(pathTam + 1);
+                    for (int i = 0; i<=dirLvl; i++) {
+                        strcat(path,dir[i]);
+                    }
+                    // controlo erros !!!
+                    mkdir(path, 0700);
                 }
 
 <DEFtree>-+.* {
@@ -131,16 +148,23 @@ nome \{\%name\%\}
                 token = strtok(NULL, " ");
                 dirLvl = aux;
                 int total = 0;
+
+                // Criar e guardar o path do novo ficheiro
+                // Recolher tamanho do path
                 while (i < dirLvl) {
                     total += strlen(dir[i]);
                     i++;
                 }
                 i = 0;
                 char *path0 = malloc(total + 1);
+
+                // Adicionar as diretorias ao path
                 while(i < dirLvl) {
                     strcat(path0,dir[i]);
                     i++;
                 }
+
+                // Verificar se existe variaveis e modificar
                 char *result = NULL;
                 result = replaceWord(token, "{%name%}", nomeDir);
                 char *pathFinal = malloc(strlen(path0) + strlen(result) + 1);
@@ -149,16 +173,26 @@ nome \{\%name\%\}
                 totalFiles++;
                 files[totalFiles-1] = malloc(sizeof(struct File));
                 files[totalFiles-1] = (createFile(result,pathFinal));
+
+                // Criar o ficheiro
+                // Controlo erros!!!
+                FILE *fp = fopen(pathFinal, "w");
+                fclose(fp);
               }
 
 
 <DEFtree>^=== {BEGIN DEF;}
 
 <DEF>^===.*[\n] {
+                            // Verificar se existe variaveis e modificar
                             char *result = NULL;
                             result = replaceWord(yytext+4, "{%name%}", nomeDir);
                             int i = 0;
+
+                            // Remover o \n
                             char *token = strtok(result, "\n");
+
+                            // Verificar se existe este ficheiro na tree e definar a sua posicao
                             while ( i < totalFiles) {
                                 if(strcmp(files[i]->name, result) == 0){
                                     posFile = i;
@@ -169,13 +203,17 @@ nome \{\%name\%\}
 
 <DEF>.*[\n] {
                 if (flag == 0) {
+
+                    // Verificar se existe variaveis e modificar
                     char *result = NULL;
                     result = replaceWord(yytext+1, "{%name%}", nomeDir);
-                    result = replaceWord(result, "{%email%}", author.email);
-                    result = replaceWord(result, "{%author%}", author.name);
                     flag++;
                     int i = 0;
+
+                    // Remover o \n
                     char *token = strtok(result, "\n");
+
+                    // Verificar se existe este ficheiro na tree e definar a sua posicao
                     while ( i < totalFiles) {
                         if(strcmp(files[i]->name, token) == 0){
                             posFile = i;
@@ -184,15 +222,21 @@ nome \{\%name\%\}
                     }
                 }
                 else {
+
+                    // Verificar se existe variaveis e modificar
                     char *result = NULL;
                     result = replaceWord(yytext, "{%name%}", nomeDir);
                     result = replaceWord(result, "{%email%}", author.email);
                     result = replaceWord(result, "{%author%}", author.name);
+
+                    // Escrever no ficheiro
                     printf("escreve isto no file %s: %s", files[posFile]->name, result);
-                    /* FILE *fptr;
-                    fptr = fopen(file[posFile]->path,w);
+                    char *filePath = malloc(strlen(files[posFile]->path));
+                    strcat(filePath,files[posFile]->path);
+                    FILE *fptr;
+                    fptr = fopen(filePath,"a");
                     fprintf(fptr,"%s",result);
-                    fclose(fptr); */
+                    fclose(fptr);
                 }
             }
 
