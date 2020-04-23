@@ -57,6 +57,10 @@ void yellow() {
     printf("\033[1;33m");
 }
 
+void cyen() {
+    printf("\033[1;36m");
+}
+
 void reset() {
     printf("\033[0m");
 }
@@ -124,7 +128,7 @@ char *replaceWord(const char *s, const char *oldW, const char *newW)
 %%
 
 
-^===[ \t\r\n]meta[\n] {BEGIN(DEFmeta); yellow(); printf(" Fetching meta data ... \n");}
+^===[ \t\r\n]meta[\n] {BEGIN(DEFmeta); cyen(); printf(" Fetching meta data ... \n");}
 
 <DEFmeta>email: {
     blue();
@@ -159,7 +163,7 @@ char *replaceWord(const char *s, const char *oldW, const char *newW)
 
 <DEFmeta>.|\n {;}
 
-<DEFmeta>^===[ \t\r\n]tree[\n] {BEGIN DEFtree; yellow(); printf("\n Fetching project structure ... \n \n");}
+<DEFmeta>^===[ \t\r\n]tree[\n] {BEGIN DEFtree; cyen(); printf("\n Fetching project structure ... \n \n");}
 
 <DEFtree>\{\%name\%\}\/ {
                             blue();
@@ -345,7 +349,7 @@ char *replaceWord(const char *s, const char *oldW, const char *newW)
               }
 
 
-<DEFtree>^=== {BEGIN DEF; yellow(); printf("\n Writing templates ... \n \n");}
+<DEFtree>^=== {BEGIN DEF; cyen(); printf("\n Writing templates ... \n \n");}
 
 <DEF>^===.*[\n] {
                             if(posFile == -1){
@@ -381,7 +385,7 @@ char *replaceWord(const char *s, const char *oldW, const char *newW)
                             printf("=====");
                             if (f != 1) {
                                 yellow();
-                                printf(" WARNING this file doesn't exists! \n ");
+                                printf(" WARNING this file doesn't exist! \n ");
                                 warnings++;
                                 posFile = -1;
                             }
@@ -419,7 +423,7 @@ char *replaceWord(const char *s, const char *oldW, const char *newW)
                     printf("=====");
                     if (f != 1) {
                         yellow();
-                        printf(" WARNING this file doesn't exists! \n ");
+                        printf(" WARNING this file doesn't exist! \n ");
                         warnings++;
                         posFile = -1;
                     }
