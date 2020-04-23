@@ -84,6 +84,10 @@ void operationSuccess() {
     printf("=");
 }
 
+void writeLine() {
+    printf("*");
+}
+
 // Função auxiliar filtar as variaveis
 char *replaceWord(const char *s, const char *oldW, const char *newW)
 {
@@ -439,7 +443,7 @@ char *replaceWord(const char *s, const char *oldW, const char *newW)
                 else {
                     if (posFile == -1){
                         yellow();
-                        printf("*");
+                        writeLine();
                     }
                     else {
                         // Verificar se existe variaveis e modificar
@@ -466,7 +470,7 @@ char *replaceWord(const char *s, const char *oldW, const char *newW)
                         fclose(fptr);
 
                         green();
-                        printf("*");
+                        writeLine();
                     }
                 }
             }
