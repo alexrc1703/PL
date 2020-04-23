@@ -80,6 +80,10 @@ void errorCreatingFile(char* name) {
     printf("ERROR creating the file %s !\n", name);
 }
 
+void operationSuccess() {
+    printf("=");
+}
+
 // Função auxiliar filtar as variaveis
 char *replaceWord(const char *s, const char *oldW, const char *newW)
 {
@@ -169,7 +173,7 @@ char *replaceWord(const char *s, const char *oldW, const char *newW)
                             blue();
                             printf(" Main directory ");
                             reset();
-                            printf("=");
+                            operationSuccess();
 
                             char *a = malloc(strlen(nomeDir) + 2);
                             if(a == NULL) {
@@ -177,9 +181,9 @@ char *replaceWord(const char *s, const char *oldW, const char *newW)
                                 return 0;
                             }
 
-                            printf("=");
+                            operationSuccess();
                             snprintf(a, sizeof a, "%s/", nomeDir);
-                            printf("=");
+                            operationSuccess();
 
                             dir[dirLvl] = malloc(strlen(a) + 1);
 
@@ -187,10 +191,10 @@ char *replaceWord(const char *s, const char *oldW, const char *newW)
                                 errorMemory();
                                 return 0;
                             }
-                            printf("=");
+                            operationSuccess();
 
                             strcpy(dir[dirLvl], a);
-                            printf("=");
+                            operationSuccess();
 
                             int status = mkdir(nomeDir, 0700);
 
@@ -210,20 +214,20 @@ char *replaceWord(const char *s, const char *oldW, const char *newW)
                     blue();
                     printf(" Directory ");
                     reset();
-                    printf("=");
+                    operationSuccess();
 
                     // Calcula qual é o nivel da diretoria
                     int aux = 0;
                     char *token = strtok(yytext, " ");
                     aux = strlen(token);
                     dirLvl = aux;
-                    printf("=");
+                    operationSuccess();
 
                     // Guarda o nome da diretoria
                     token = strtok(NULL, " ");
                     char *result = NULL;
                     result = replaceWord(token, "{%name%}", nomeDir);
-                    printf("=");
+                    operationSuccess();
 
                     // Adicionar a nova diretoria no respetivo nivel
                     dir[dirLvl] = malloc(strlen(result) + 1);
@@ -231,10 +235,10 @@ char *replaceWord(const char *s, const char *oldW, const char *newW)
                         errorMemory();
                         return 0;
                     }
-                    printf("=");
+                    operationSuccess();
 
                     strcpy(dir[dirLvl], result);
-                    printf("=");
+                    operationSuccess();
 
                     // Criar a diretoria
                     int pathTam = 0;
@@ -247,12 +251,12 @@ char *replaceWord(const char *s, const char *oldW, const char *newW)
                         errorMemory();
                         return 0;
                     }
-                    printf("=");
+                    operationSuccess();
 
                     for (int i = 0; i<=dirLvl; i++) {
                         strcat(path,dir[i]);
                     }
-                    printf("=");
+                    operationSuccess();
 
                     int status = mkdir(path, 0700);
 
@@ -270,7 +274,7 @@ char *replaceWord(const char *s, const char *oldW, const char *newW)
                 blue();
                 printf(" File      ");
                 reset();
-                printf("=");
+                operationSuccess();
 
                 // Calcula o nivel da diretoria
                 int aux = 0;
@@ -278,11 +282,11 @@ char *replaceWord(const char *s, const char *oldW, const char *newW)
                 char *token = strtok(yytext, " ");
                 aux = strlen(token);
                 dirLvl = aux;
-                printf("=");
+                operationSuccess();
 
                 // Guarda o nome do file
                 token = strtok(NULL, " ");
-                printf("=");
+                operationSuccess();
 
                 // Criar e guardar o path do novo ficheiro
                 // Recolher tamanho do path
@@ -291,14 +295,14 @@ char *replaceWord(const char *s, const char *oldW, const char *newW)
                     total += strlen(dir[i]);
                     i++;
                 }
-                printf("=");
+                operationSuccess();
 
                 char *path0 = malloc(total + 1);
                 if (path0 == NULL) {
                     errorMemory();
                     return 0;
                 }
-                printf("=");
+                operationSuccess();
 
                 // Adicionar as diretorias ao path
                 i = 0;
@@ -306,7 +310,7 @@ char *replaceWord(const char *s, const char *oldW, const char *newW)
                     strcat(path0,dir[i]);
                     i++;
                 }
-                printf("=");
+                operationSuccess();
 
                 // Verificar se existe variaveis e modificar
                 char *result = NULL;
@@ -320,7 +324,7 @@ char *replaceWord(const char *s, const char *oldW, const char *newW)
                 }
                 strcat(pathFinal,path0);
                 strcat(pathFinal,result);
-                printf("=");
+                operationSuccess();
 
                 // Incrementa o numero total de files
                 totalFiles++;
@@ -331,7 +335,7 @@ char *replaceWord(const char *s, const char *oldW, const char *newW)
                     errorMemory();
                 }
                 files[totalFiles-1] = (createFile(result,pathFinal));
-                printf("=");
+                operationSuccess();
 
                 // Criar o ficheiro
 
@@ -340,7 +344,7 @@ char *replaceWord(const char *s, const char *oldW, const char *newW)
                     errorCreatingFile(result);
                     return 0;
                 }
-                printf("=");
+                operationSuccess();
                 fclose(fp);
 
                 green();
