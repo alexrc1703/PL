@@ -9,6 +9,8 @@ author: J.João
 - {%name%}.fl
 - doc/
 -- {%name%}.md
+-- doc2/
+--- teste.txt
 - exemplo/
 - Makefile
 
@@ -17,7 +19,6 @@ author: J.João
 {%name%}: {%name%}.fl
         flex {%name%}.fl
         cc -o {%name%} lex.yy.c
-
 install: {%name%}
         cp {%name%} /usr/local/bin/
 
@@ -35,6 +36,13 @@ install: {%name%}
 ## Author
 
 Comments and bug reports to {%author%}, {%email%}.
+
+=== test.txt
+testing errors
+0
+1
+2
+3
 
 === {%name%}.fl
 %option noyywrap yylineno
