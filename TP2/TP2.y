@@ -4,21 +4,21 @@ extern int yylex();
 int yyerror();
 %}
 
+%union{
+    string vstring;
+}
 
-
-%token ERRO
+%token ERRO pal
+%type <vstring> pal
 
 
 %%
 
-Html
-    : Tag
-    : PlainText
-    : Atribute
-    ;
+
 
 Tag
-    :
+    : pal text
+    : pal
     ;
 
 PlainText
