@@ -11,6 +11,26 @@ int yyerror();
 
 %%
 
+Html
+    : Tag
+    : PlainText
+    : Atribute
+    ;
+
+Tag
+    :
+    ;
+
+PlainText
+         :
+         ;
+
+Atribute
+        :
+        ;
+
+
+
 
 
 %%

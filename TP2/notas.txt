@@ -1,0 +1,46 @@
+
+Utilizar recursividade a esquerda
+Posicao yyleng esta o 0
+
+
+
+
+------- TAGS --------
+ul
+  li Item A
+  li Item B
+  li Item C
+
+<ul>
+  <li>Item A</li>
+  <li>Item B</li>
+  <li>Item C</li>
+</ul>
+
+
+img, meta e link
+
+<img /> <meta />  <link /> 
+
+------- Plain Text --------
+
+p This is plain old <em>text</em> content.
+
+<p>This is plain old <em>text</em> content.</p>
+
+
+------- Atributos --------
+
+input(data-json=`
+  {
+    "very-long": "piece of ",
+    "data": true
+  }
+`)
+
+<input data-json="
+  {
+    &quot;very-long&quot;: &quot;piece of &quot;,
+    &quot;data&quot;: true
+  }
+" />
