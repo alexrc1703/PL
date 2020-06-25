@@ -12,13 +12,3 @@ Tag
     | '.' string
     | '#' string
     ;
-
-h1.texto-grande.preto
-
-h1 texto
-
-h1#id2
-
-h1(class='texto-grande preto' id='id2' style='....')
-
-<h1 class="texto-grande preto" id="id2" style="...."></h1>
