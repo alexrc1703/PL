@@ -1,0 +1,24 @@
+Pug
+    : Tags                    { printf("%s\n",$1);}
+    ;
+
+Tags
+    : Tags Tag                 { asprintf($$,"%s\n%s",$1,$2); }
+    | Tag                     { asprintf($$,"%s",$1); }
+    ;
+
+Tag
+    : tag                 { asprintf($$,"<%s>\n%s",$1,$2); }
+    | '.' string
+    | '#' string
+    ;
+
+h1.texto-grande.preto
+
+h1 texto
+
+h1#id2
+
+h1(class='texto-grande preto' id='id2' style='....')
+
+<h1 class="texto-grande preto" id="id2" style="...."></h1>
