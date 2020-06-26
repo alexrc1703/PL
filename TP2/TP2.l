@@ -1,10 +1,18 @@
 %{
 #include "y.tab.h"
 %}
+%x LIState
 %%
 [ \t\n\r] ;
 
-[a-zA-Z]+[ \t\n\r][a-zA-Z]* { yylval.vstring = strdup(yytext); return text;}
+
+
+li { BEGIN LIState; return li;}
+<LIState>[ \t\.\#] { return yytext[0]; }
+
+<LIState>[^ |\t|\.|\#][^\n]+ {yylval.vstring = strdup(yytext);BEGIN 0;return text;}
+
+
 
 
 
