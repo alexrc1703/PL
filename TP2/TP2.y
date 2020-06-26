@@ -3,6 +3,10 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <ctype.h>
+
+#include <sys/stat.h>
+
 extern int yylex();
 extern int yylineno;
 extern char *yytext;
@@ -33,8 +37,18 @@ SeqTags
 
 Tag 
     : li ' ' text { asprintf(&$$,"<li> %s </li>\n",$3);}
-    | li '.' text { asprintf(&$$,"<li> %s ponto </li>\n",$3);}
-    | li '#' text { asprintf(&$$,"<li> %s cardi </li>\n",$3);}
+    | li '.' text { char*aux=strdup($3); 
+                    char* fst=strtok(aux,"(");
+                    char* snd=strtok(NULL,"'");
+                    char* trd=strtok(NULL,"'");
+                    //printf("<li class=\"%s\" %s\"%s\">\n",fst,snd,trd);
+                    asprintf(&$$,"<li class=\"%s\" %s\"%s\">\n",fst,snd,trd);}
+    | li '#' text { char*aux=strdup($3);
+                    char* fst=strtok(aux,".");
+                    char* snd=strtok(NULL,"\n");
+                  
+                    printf("<li id=\"%s\" class=\"%s\"></li>\n",fst,snd);
+                     asprintf(&$$,"<li id=\"%s\" class=\"%s\"></li>\n",fst,snd);}
     ;
  
 
