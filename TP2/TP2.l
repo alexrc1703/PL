@@ -1,7 +1,7 @@
 %{
 #include "y.tab.h"
 %}
-%x LIState HeadState TitleState ScriptState DivState
+%x LIState HeadState TitleState ScriptState DivState PState
 %%
 
 [ \t\n\r]  ;
@@ -25,14 +25,14 @@ h[1-5]+ {BEGIN HeadState; yylval.vstring = strdup(yytext); return head;}
 <HeadState>[ \t] ;
 <HeadState>[^ |\t][^\n]+ {yylval.vstring = strdup(yytext);BEGIN 0;return text;}
 
-# {BEGIN DivState;}
-.+[^\n] {yylval.vstring = strdup(yytext);BEGIN 0;return text;}
-
-
+p {BEGIN PState; return p;}
+<PState>.+[^\n]+ {yylval.vstring = strdup(yytext+2);BEGIN 0; return text;}
 
 li { BEGIN LIState; return li;}
-<LIState>[ \t\.] { return yytext[0]; }
-<LIState>[^ |\t|\.][^\n]+ {yylval.vstring = strdup(yytext);BEGIN 0;return text;}
+<LIState>[ \t\.\#] { return yytext[0]; }
+<LIState>[^ |\t|\.|\#][^\n]+ {yylval.vstring = strdup(yytext);BEGIN 0;return text;}
+
+
 
 
 

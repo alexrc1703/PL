@@ -20,8 +20,8 @@ int erroSem(char*);
 
 }
 
-%token ERRO text li num head html hd title script body 
-%type <vstring> text li head html hd title Tag Pug SeqTags script body 
+%token ERRO text li num head html hd title script body p
+%type <vstring> text li head html  title Tag Pug SeqTags script body p
 
 
 %%
@@ -43,8 +43,8 @@ Tag
     | body  {char* aux=strdup($1);asprintf(&$$,"<%s></%s>\n",aux,aux);}
     | head text { char* aux=strdup($2);
                   char* aux2=strdup($1);
-                  asprintf(&$$,"<%s>%s</%s>",$1,aux,$1);}
-    | '#' text { asprintf(&$$,"%s\n",$2);}
+                  asprintf(&$$,"<%s>%s</>",$1,aux);}
+    | p text {asprintf(&$$,"<p>%s</p>",$2);}
     | li ' ' text { asprintf(&$$,"<li> %s </li>\n",$3);}
     | li '.' text { char*aux=strdup($3); 
                     char* fst=strtok(aux,"(");
