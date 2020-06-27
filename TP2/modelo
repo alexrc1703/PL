@@ -1,16 +1,18 @@
-head
-  title Pug
-  script(type='text/javascript').
-    if (foo) bar(1 + 5)
-h1 Pug - node template engine
-#container.col
-  p You are amazing
-  p Pug is a terse and simple templating language.
-ul(style='style me')
-  li opcao 1
-  li opcao 2
-  li opcao 3
-img.class1(href='google.pt')
+html 
+  head
+    title Pug
+    script(type='text/javascript').
+      if (foo) bar(1 + 5)
+  body
+    h1 Pug - node template engine
+    #container.col                     -------------- imprime tab a seguir a col --------------
+      p You are amazing
+      p Pug is a terse and simple templating language.
+    ul(style='style me')
+      li opcao 1
+      li opcao 2
+      li opcao 3
+    img.class1(href='google.pt')
 
 
 <html lang="en">

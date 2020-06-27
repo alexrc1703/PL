@@ -20,8 +20,8 @@ int erroSem(char*);
 
 }
 
-%token ERRO text li num head html hd title script body p
-%type <vstring> text li head html  title Tag Pug SeqTags script body p
+%token ERRO text li num head html hd title script body divs p ul selfclose
+%type <vstring> text li head html  title Tag Pug SeqTags script body p ul selfclose
 
 
 %%
@@ -43,15 +43,21 @@ Tag
     | body  {char* aux=strdup($1);asprintf(&$$,"<%s></%s>\n",aux,aux);}
     | head text { char* aux=strdup($2);
                   char* aux2=strdup($1);
-                  asprintf(&$$,"<%s>%s</>",$1,aux);}
-    | p text {asprintf(&$$,"<p>%s</p>",$2);}
+                  asprintf(&$$,"<%s>%s</>\n",$1,aux);}
+    | divs text {char* aux=strdup($2);
+                char* fst=strtok(aux,".");
+                char* snd=strtok(NULL,"\n");
+                asprintf(&$$,"<div id=\"%s\" class=\"%s\"></div>\n",fst,snd);}
+    | p text {asprintf(&$$,"<p>%s</p>\n",$2);}
+    | ul text { char* fst=strtok($2,"''");
+                char* snd=strtok(NULL,"'");
+                asprintf(&$$,"<ul %s\"%s\"></ul>\n",fst,snd);}
     | li ' ' text { asprintf(&$$,"<li> %s </li>\n",$3);}
-    | li '.' text { char*aux=strdup($3); 
-                    char* fst=strtok(aux,"(");
-                    char* snd=strtok(NULL,"'");
-                    char* trd=strtok(NULL,"'");
-                    //printf("<li class=\"%s\" %s\"%s\">\n",fst,snd,trd);
-                    asprintf(&$$,"<li class=\"%s\" %s\"%s\">\n",fst,snd,trd);}
+    | selfclose '.' text {  char*aux=strdup($3); 
+                            char* fst=strtok(aux,"(");
+                            char* snd=strtok(NULL,"'");
+                            char* trd=strtok(NULL,"'");
+                            asprintf(&$$,"<%s class=\"%s\" %s\"%s\"></%s>\n",$1,fst,snd,trd,$1);}
     ;
  
 
