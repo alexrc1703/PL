@@ -7,7 +7,7 @@ html(lang='en')
 		.container-fluid
 			h1.navbar-header My Website!
 		h1 Hello, World!
-		.remark.class2
+		.remark.class2(class='class3')
 			p Pug rocks!
 		ul
 			li
@@ -16,4 +16,4 @@ html(lang='en')
 				a(href='/page-1') Page 1
 			li
 				a(href='/page-2') Page 2
-		input.search
+		input.search(type='text' name='search' placeholder='Enter a search term')

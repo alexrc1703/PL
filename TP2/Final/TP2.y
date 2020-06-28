@@ -43,7 +43,9 @@ Line
     : Tag { asprintf(&$$,"%s",$1); }
     | tabs Tag { asprintf(&$$,"%s%s",$1,$2); }
     | tabs '#' string nl{ asprintf(&$$, "%s<div id=\"%s\">",$1 ,$3); }
+    | tabs '#' string '(' PropsList ')' nl{ asprintf(&$$, "%s<div id=\"%s\" %s>",$1 ,$3, $5); }
     | tabs ClassList nl{ asprintf(&$$, "%s<div class=\"%s\">",$1 ,$2); }
+    | tabs ClassList '(' PropsList ')' nl{ asprintf(&$$, "%s<div class=\"%s\" %s>",$1 ,$2, $4); }
     | tabs '#' string ClassList { asprintf(&$$, "%s<div id=\"%s\" class=\"%s\">",$1 ,$3, $4); }
     | tabs ClassList '#' string { asprintf(&$$, "%s<div id=\"%s\" class=\"%s\">",$1 ,$4, $2); }
     ;
@@ -56,6 +58,10 @@ Tag
     | string ClassList ' ' Text nl{ asprintf(&$$,"<%s class=\"%s\"> %s",$1,$2,$4); }
     | string '#' string ClassList '(' PropsList ')' ' ' Text nl{ asprintf(&$$, "<%s id=\"%s\" class=\"%s\" %s> %s", $1, $3, $4, $6, $9); }
     | string ClassList '#' string '(' PropsList ')' ' ' Text nl{ asprintf(&$$, "<%s id=\"%s\" class=\"%s\" %s> %s", $1, $4, $2, $6, $9); }
+    | string ClassList '(' PropsList ')' ' ' Text nl{ asprintf(&$$, "<%s class=\"%s\" %s> %s", $1, $2, $4, $7); }
+    | string '#' string '(' PropsList ')' ' ' Text nl{ asprintf(&$$, "<%s id=\"%s\" %s> %s", $1, $3, $5, $8); }
+    | string ClassList '(' PropsList ')' nl{ asprintf(&$$, "<%s class=\"%s\" %s>", $1, $2, $4); }
+    | string '#' string '(' PropsList ')' nl{ asprintf(&$$, "<%s id=\"%s\" %s>", $1, $3, $5); }
     | string '(' PropsList ')' nl{ asprintf(&$$,"<%s %s>",$1, $3); }
     | string '(' PropsList ')' ' ' Text nl{ asprintf(&$$,"<%s %s> %s",$1, $3, $6); }
     ;
