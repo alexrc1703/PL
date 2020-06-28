@@ -25,15 +25,15 @@ int erroSem(char*);
 
 
 %%
-Pug 
+Pug
     : SeqTags  { printf("%s\n",$1);}
     ;
-SeqTags 
+SeqTags
         : SeqTags Tag  { asprintf(&$$,"%s\n%s",$1,$2); }
         | Tag          { asprintf(&$$,"%s",$1); }
         ;
 
-Tag 
+Tag
     : html  {char* aux=strdup($1);asprintf(&$$,"<%s lang=\"en\"></%s>\n",aux,aux);}
     | hd    {asprintf(&$$,"<head> </head>\n"); }
     | title text {asprintf(&$$,"<title>%s</title>\n", $2); }
@@ -43,7 +43,7 @@ Tag
     | body  {char* aux=strdup($1);asprintf(&$$,"<%s></%s>\n",aux,aux);}
     | head text { char* aux=strdup($2);
                   char* aux2=strdup($1);
-                  asprintf(&$$,"<%s>%s</>\n",$1,aux);}
+                  asprintf(&$$,"<%s>%s</%s>\n",$1,aux,$1);}
     | divs text {char* aux=strdup($2);
                 char* fst=strtok(aux,".");
                 char* snd=strtok(NULL,"\n");
@@ -53,13 +53,13 @@ Tag
                 char* snd=strtok(NULL,"'");
                 asprintf(&$$,"<ul %s\"%s\"></ul>\n",fst,snd);}
     | li ' ' text { asprintf(&$$,"<li> %s </li>\n",$3);}
-    | selfclose '.' text {  char*aux=strdup($3); 
+    | selfclose '.' text {  char*aux=strdup($3);
                             char* fst=strtok(aux,"(");
                             char* snd=strtok(NULL,"'");
                             char* trd=strtok(NULL,"'");
-                            asprintf(&$$,"<%s class=\"%s\" %s\"%s\"></%s>\n",$1,fst,snd,trd,$1);}
+                            asprintf(&$$,"<%s class=\"%s\" %s\"%s\"/>\n",$1,fst,snd,trd);}
     ;
- 
+
 
 
 

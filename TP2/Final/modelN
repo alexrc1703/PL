@@ -1,0 +1,20 @@
+html(lang='en')
+    head
+        title Hello, World!
+        script(type='text/javascript').
+                if (foo) bar(1 + 5)
+    body
+        nav#navbar-default
+        .container-fluid
+            h1.navbar-header My Website!
+        h1 Hello, World!
+        .remark
+            p Pug rocks!
+        ul
+            li
+                a(href='/') Home
+            li
+                a(href='/page-1') Page 1
+            li
+                a(href='/page-2') Page 2
+        input.search(type='text' name='search' placeholder='Enter a search term...')
