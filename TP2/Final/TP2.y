@@ -50,23 +50,23 @@ Line
 
 Tag
     : string nl{ asprintf(&$$,"<%s>",$1); }
-    | string Text nl{ asprintf(&$$,"<%s> %s",$1, $2); }
+    | string ' ' Text nl{ asprintf(&$$,"<%s> %s",$1, $3); }
     | string '#' string nl{ asprintf(&$$,"<%s id=\"%s\">",$1,$3); }
     | string ClassList nl{ asprintf(&$$,"<%s class=\"%s\">",$1,$2); }
-    | string ClassList Text nl{ asprintf(&$$,"<%s class=\"%s\"> %s",$1,$2,$3); }
-    | string '#' string ClassList '(' PropsList ')' Text nl{ asprintf(&$$, "<%s id=\"%s\" class=\"%s\" %s> %s", $1, $3, $4, $6, $8); }
-    | string ClassList '#' string '(' PropsList ')' Text nl{ asprintf(&$$, "<%s id=\"%s\" class=\"%s\" %s> %s", $1, $4, $2, $6, $8); }
+    | string ClassList ' ' Text nl{ asprintf(&$$,"<%s class=\"%s\"> %s",$1,$2,$4); }
+    | string '#' string ClassList '(' PropsList ')' ' ' Text nl{ asprintf(&$$, "<%s id=\"%s\" class=\"%s\" %s> %s", $1, $3, $4, $6, $9); }
+    | string ClassList '#' string '(' PropsList ')' ' ' Text nl{ asprintf(&$$, "<%s id=\"%s\" class=\"%s\" %s> %s", $1, $4, $2, $6, $9); }
     | string '(' PropsList ')' nl{ asprintf(&$$,"<%s %s>",$1, $3); }
-    | string '(' PropsList ')' Text nl{ asprintf(&$$,"<%s %s> %s",$1, $3, $5); }
+    | string '(' PropsList ')' ' ' Text nl{ asprintf(&$$,"<%s %s> %s",$1, $3, $6); }
     ;
 
 ClassList
-    : ClassList '.' Text { asprintf(&$$,"%s %s",$1, $3); }
-    | '.' Text { asprintf(&$$,"%s",$2); }
+    : ClassList '.' string { asprintf(&$$,"%s %s",$1, $3); }
+    | '.' string { asprintf(&$$,"%s",$2); }
     ;
 
 PropsList
-    : PropsList Prop { asprintf(&$$,"%s %s",$1, $2); }
+    : PropsList ' ' Prop { asprintf(&$$,"%s %s",$1, $3); }
     | Prop { asprintf(&$$,"%s",$1); }
     ;
 
@@ -75,7 +75,7 @@ Prop
     ;
 
 Text
-    : Text string { asprintf(&$$,"%s %s",$1, $2); }
+    : Text ' ' string { asprintf(&$$,"%s %s",$1, $3); }
     | string { asprintf(&$$,"%s",$1); }
     ;
 

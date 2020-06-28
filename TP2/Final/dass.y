@@ -58,8 +58,8 @@ Tag
     ;
 
 ClassList
-    : ClassList '.' Text { asprintf(&$$,"%s %s",$1, $3); }
-    | '.' Text { asprintf(&$$,"%s",$2); }
+    : ClassList '.' string { asprintf(&$$,"%s %s",$1, $3); }
+    | '.' string { asprintf(&$$,"%s",$2); }
     ;
 
 PropsList

@@ -11,7 +11,7 @@
 
 [\(\)\=\'#\.] {return yytext[0];}
 
-[a-zA-Z0-9, !\/-]+ {yylval.vstring = strdup(yytext); return string;}
+[a-zA-Z0-9,!\/-]+ {yylval.vstring = strdup(yytext); return string;}
 
 . return ERRO;
 

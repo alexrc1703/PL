@@ -1,6 +1,6 @@
 html(lang='en')
 	head
-		title Hello,World!
+		title Hello, World!
 		script(type='text/javascript') nao e permitido
 	body
 		nav#navbar-default
