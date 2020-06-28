@@ -14,4 +14,4 @@ lex.yy.c : TP2.l y.tab.h
 	flex TP2.l
 
 clean:
-	rm -rf lex.yy.c lex.yy.o TP2.exe y.tab.c y.tab.h y.tab.o
+	rm -rf lex.yy.c lex.yy.o TP2.exe y.tab.c y.tab.h y.tab.o y.output y.tab.c
