@@ -6,7 +6,7 @@ html(lang='en')
 		nav#navbar-default
 		.container-fluid
 			h1.navbar-header My Website!
-		h1 Hello, World!
+		h2 Hello, World!
 		.remark.class2(class='class3')
 			p Pug rocks!
 		ul

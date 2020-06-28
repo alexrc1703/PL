@@ -56,7 +56,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 26 "TP2.y"
+#line 53 "TP2.y"
 {
     char* vstring;
     int vint;

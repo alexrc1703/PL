@@ -97,14 +97,41 @@ extern int yylineno;
 extern char *yytext;
 int yyerror();
 int erroSem(char*);
+int lvl = 0;
+char *tagsList[100];
 
-void closeTags(char *t){
-    printf("closing Tabs!!\n");
+char* manageTags(char *tabsR) {
+    int newLvl = strlen(tabsR);
+    char* close = "";
+    if (newLvl <= lvl) {
+        char* t = malloc(sizeof('\t')*lvl-newLvl);
+        for(int i = lvl; i >= newLvl; i--){
+            for(int j = 0; j < i; j++) t[j]='\t';
+            t[i] = '\0';
+            asprintf(&close,"%s%s</ %s>\n",close,t, tagsList[i]);
+        }
+    }
+    lvl = newLvl;
+    return close;
 }
 
-void updateTags(char* t){
-    printf("Updating tags lvl array with tag %s \n", t);
+char* getTag(char* line) {
+    char* token = strtok(line," ");
+    token = strtok(token,">");
+    return token;
 }
+
+char* closeTags() {
+    char* t = malloc(sizeof('\t')*lvl);
+    char* close = "";
+    for(int i = lvl; i >= 0; i--){
+        for(int j = 0; j < i; j++) t[j]='\t';
+        t[i] = '\0';
+        asprintf(&close,"%s%s</ %s>\n",close,t, tagsList[i]);
+    }
+    return close;
+}
+
 
 
 
@@ -129,13 +156,13 @@ void updateTags(char* t){
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 26 "TP2.y"
+#line 53 "TP2.y"
 {
     char* vstring;
     int vint;
 }
 /* Line 193 of yacc.c.  */
-#line 139 "y.tab.c"
+#line 166 "y.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -148,7 +175,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 152 "y.tab.c"
+#line 179 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -453,10 +480,10 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    41,    41,    46,    47,    51,    52,    53,    54,    55,
-      56,    57,    58,    59,    60,    61,    62,    66,    67,    68,
-      69,    70,    71,    72,    73,    74,    75,    76,    77,    78,
-      82,    83,    87,    88,    92,    96,    97
+       0,    66,    66,    71,    72,    76,    77,    78,    79,    80,
+      81,    82,    83,    84,    85,    86,    87,    91,    92,    93,
+      94,    95,    96,    97,    98,    99,   100,   101,   102,   103,
+     107,   108,   112,   113,   117,   121,   122
 };
 #endif
 
@@ -1415,183 +1442,183 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 41 "TP2.y"
-    {printf("%s\n", (yyvsp[(1) - (1)].vstring));}
+#line 66 "TP2.y"
+    {printf("%s\n%s\n", (yyvsp[(1) - (1)].vstring), closeTags());}
     break;
 
   case 3:
-#line 46 "TP2.y"
+#line 71 "TP2.y"
     { asprintf(&(yyval.vstring),"%s\n%s",(yyvsp[(1) - (2)].vstring),(yyvsp[(2) - (2)].vstring)); }
     break;
 
   case 4:
-#line 47 "TP2.y"
+#line 72 "TP2.y"
     { asprintf(&(yyval.vstring),"%s",(yyvsp[(1) - (1)].vstring)); }
     break;
 
   case 5:
-#line 51 "TP2.y"
-    { asprintf(&(yyval.vstring),"%s",(yyvsp[(1) - (1)].vstring)); }
+#line 76 "TP2.y"
+    { asprintf(&(yyval.vstring),"%s",(yyvsp[(1) - (1)].vstring)); tagsList[lvl] = strdup(getTag((yyvsp[(1) - (1)].vstring)+1));}
     break;
 
   case 6:
-#line 52 "TP2.y"
-    { closeTags((yyvsp[(1) - (2)].vstring)); asprintf(&(yyval.vstring),"%s%s",(yyvsp[(1) - (2)].vstring),(yyvsp[(2) - (2)].vstring)); }
+#line 77 "TP2.y"
+    { char* res = manageTags((yyvsp[(1) - (2)].vstring)); asprintf(&(yyval.vstring), "%s%s%s",res,(yyvsp[(1) - (2)].vstring),(yyvsp[(2) - (2)].vstring)); tagsList[lvl] = strdup(getTag((yyvsp[(2) - (2)].vstring)+1)); }
     break;
 
   case 7:
-#line 53 "TP2.y"
-    { closeTags((yyvsp[(1) - (4)].vstring)); char* div="div"; updateTags(div); asprintf(&(yyval.vstring), "%s<div id=\"%s\">",(yyvsp[(1) - (4)].vstring) ,(yyvsp[(3) - (4)].vstring)); }
+#line 78 "TP2.y"
+    { char* res = manageTags((yyvsp[(1) - (4)].vstring)); asprintf(&(yyval.vstring), "%s%s<div id=\"%s\">",res, (yyvsp[(1) - (4)].vstring) ,(yyvsp[(3) - (4)].vstring)); char* div="div"; tagsList[lvl] = strdup(div);}
     break;
 
   case 8:
-#line 54 "TP2.y"
-    { closeTags((yyvsp[(1) - (7)].vstring)); char* div="div"; updateTags(div); asprintf(&(yyval.vstring), "%s<div id=\"%s\" %s>",(yyvsp[(1) - (7)].vstring) ,(yyvsp[(3) - (7)].vstring), (yyvsp[(5) - (7)].vstring)); }
+#line 79 "TP2.y"
+    { char* res = manageTags((yyvsp[(1) - (7)].vstring)); asprintf(&(yyval.vstring), "%s%s<div id=\"%s\" %s>",res,(yyvsp[(1) - (7)].vstring) ,(yyvsp[(3) - (7)].vstring), (yyvsp[(5) - (7)].vstring)); char* div="div"; tagsList[lvl] = strdup(div); }
     break;
 
   case 9:
-#line 55 "TP2.y"
-    { closeTags((yyvsp[(1) - (3)].vstring)); char* div="div"; updateTags(div); asprintf(&(yyval.vstring), "%s<div class=\"%s\">",(yyvsp[(1) - (3)].vstring) ,(yyvsp[(2) - (3)].vstring)); }
+#line 80 "TP2.y"
+    { char* res = manageTags((yyvsp[(1) - (3)].vstring)); asprintf(&(yyval.vstring), "%s%s<div class=\"%s\">",res,(yyvsp[(1) - (3)].vstring) ,(yyvsp[(2) - (3)].vstring)); char* div="div"; tagsList[lvl] = strdup(div); }
     break;
 
   case 10:
-#line 56 "TP2.y"
-    { closeTags((yyvsp[(1) - (6)].vstring)); char* div="div"; updateTags(div); asprintf(&(yyval.vstring), "%s<div class=\"%s\" %s>",(yyvsp[(1) - (6)].vstring) ,(yyvsp[(2) - (6)].vstring), (yyvsp[(4) - (6)].vstring)); }
+#line 81 "TP2.y"
+    { char* res = manageTags((yyvsp[(1) - (6)].vstring)); asprintf(&(yyval.vstring), "%s%s<div class=\"%s\" %s>",res,(yyvsp[(1) - (6)].vstring) ,(yyvsp[(2) - (6)].vstring), (yyvsp[(4) - (6)].vstring)); char* div="div"; tagsList[lvl] = strdup(div); }
     break;
 
   case 11:
-#line 57 "TP2.y"
-    { closeTags((yyvsp[(1) - (5)].vstring)); char* div="div"; updateTags(div); asprintf(&(yyval.vstring), "%s<div id=\"%s\" class=\"%s\">",(yyvsp[(1) - (5)].vstring) ,(yyvsp[(3) - (5)].vstring), (yyvsp[(4) - (5)].vstring)); }
+#line 82 "TP2.y"
+    { char* res = manageTags((yyvsp[(1) - (5)].vstring)); asprintf(&(yyval.vstring), "%s%s<div id=\"%s\" class=\"%s\">",res,(yyvsp[(1) - (5)].vstring) ,(yyvsp[(3) - (5)].vstring), (yyvsp[(4) - (5)].vstring)); char* div="div"; tagsList[lvl] = strdup(div); }
     break;
 
   case 12:
-#line 58 "TP2.y"
-    { closeTags((yyvsp[(1) - (5)].vstring)); char* div="div"; updateTags(div); asprintf(&(yyval.vstring), "%s<div id=\"%s\" class=\"%s\">",(yyvsp[(1) - (5)].vstring) ,(yyvsp[(4) - (5)].vstring), (yyvsp[(2) - (5)].vstring)); }
+#line 83 "TP2.y"
+    { char* res = manageTags((yyvsp[(1) - (5)].vstring)); asprintf(&(yyval.vstring), "%s%s<div id=\"%s\" class=\"%s\">",res,(yyvsp[(1) - (5)].vstring) ,(yyvsp[(4) - (5)].vstring), (yyvsp[(2) - (5)].vstring)); char* div="div"; tagsList[lvl] = strdup(div); }
     break;
 
   case 13:
-#line 59 "TP2.y"
-    { closeTags((yyvsp[(1) - (8)].vstring)); char* div="div"; updateTags(div); asprintf(&(yyval.vstring), "%s<div id=\"%s\" class=\"%s\" %s>",(yyvsp[(1) - (8)].vstring) ,(yyvsp[(3) - (8)].vstring), (yyvsp[(4) - (8)].vstring), (yyvsp[(6) - (8)].vstring)); }
+#line 84 "TP2.y"
+    { char* res = manageTags((yyvsp[(1) - (8)].vstring)); asprintf(&(yyval.vstring), "%s%s<div id=\"%s\" class=\"%s\" %s>",res,(yyvsp[(1) - (8)].vstring) ,(yyvsp[(3) - (8)].vstring), (yyvsp[(4) - (8)].vstring), (yyvsp[(6) - (8)].vstring)); char* div="div"; tagsList[lvl] = strdup(div); }
     break;
 
   case 14:
-#line 60 "TP2.y"
-    { closeTags((yyvsp[(1) - (8)].vstring)); char* div="div"; updateTags(div); asprintf(&(yyval.vstring), "%s<div id=\"%s\" class=\"%s\" %s>",(yyvsp[(1) - (8)].vstring) ,(yyvsp[(4) - (8)].vstring), (yyvsp[(2) - (8)].vstring), (yyvsp[(6) - (8)].vstring)); }
+#line 85 "TP2.y"
+    { char* res = manageTags((yyvsp[(1) - (8)].vstring)); asprintf(&(yyval.vstring), "%s%s<div id=\"%s\" class=\"%s\" %s>",res,(yyvsp[(1) - (8)].vstring) ,(yyvsp[(4) - (8)].vstring), (yyvsp[(2) - (8)].vstring), (yyvsp[(6) - (8)].vstring)); char* div="div"; tagsList[lvl] = strdup(div); }
     break;
 
   case 15:
-#line 61 "TP2.y"
-    { closeTags((yyvsp[(1) - (9)].vstring)); char* div="div"; updateTags(div); asprintf(&(yyval.vstring), "%s<div id=\"%s\" class=\"%s\" %s> %s",(yyvsp[(1) - (9)].vstring) ,(yyvsp[(3) - (9)].vstring), (yyvsp[(4) - (9)].vstring), (yyvsp[(6) - (9)].vstring), (yyvsp[(8) - (9)].vstring)); }
+#line 86 "TP2.y"
+    { char* res = manageTags((yyvsp[(1) - (9)].vstring)); asprintf(&(yyval.vstring), "%s%s<div id=\"%s\" class=\"%s\" %s> %s",res,(yyvsp[(1) - (9)].vstring) ,(yyvsp[(3) - (9)].vstring), (yyvsp[(4) - (9)].vstring), (yyvsp[(6) - (9)].vstring), (yyvsp[(8) - (9)].vstring)); char* div="div"; tagsList[lvl] = strdup(div); }
     break;
 
   case 16:
-#line 62 "TP2.y"
-    { closeTags((yyvsp[(1) - (9)].vstring)); char* div="div"; updateTags(div); asprintf(&(yyval.vstring), "%s<div id=\"%s\" class=\"%s\" %s> %s",(yyvsp[(1) - (9)].vstring) ,(yyvsp[(4) - (9)].vstring), (yyvsp[(2) - (9)].vstring), (yyvsp[(6) - (9)].vstring), (yyvsp[(8) - (9)].vstring)); }
+#line 87 "TP2.y"
+    { char* res = manageTags((yyvsp[(1) - (9)].vstring)); asprintf(&(yyval.vstring), "%s%s<div id=\"%s\" class=\"%s\" %s> %s",res,(yyvsp[(1) - (9)].vstring) ,(yyvsp[(4) - (9)].vstring), (yyvsp[(2) - (9)].vstring), (yyvsp[(6) - (9)].vstring), (yyvsp[(8) - (9)].vstring)); char* div="div"; tagsList[lvl] = strdup(div); }
     break;
 
   case 17:
-#line 66 "TP2.y"
-    { updateTags((yyvsp[(1) - (2)].vstring)); asprintf(&(yyval.vstring),"<%s>",(yyvsp[(1) - (2)].vstring)); }
+#line 91 "TP2.y"
+    {  asprintf(&(yyval.vstring), "<%s>",(yyvsp[(1) - (2)].vstring)); }
     break;
 
   case 18:
-#line 67 "TP2.y"
-    { updateTags((yyvsp[(1) - (4)].vstring)); asprintf(&(yyval.vstring),"<%s> %s",(yyvsp[(1) - (4)].vstring), (yyvsp[(3) - (4)].vstring)); }
+#line 92 "TP2.y"
+    {  asprintf(&(yyval.vstring), "<%s> %s",(yyvsp[(1) - (4)].vstring), (yyvsp[(3) - (4)].vstring));}
     break;
 
   case 19:
-#line 68 "TP2.y"
-    { updateTags((yyvsp[(1) - (4)].vstring)); asprintf(&(yyval.vstring),"<%s id=\"%s\">",(yyvsp[(1) - (4)].vstring),(yyvsp[(3) - (4)].vstring)); }
+#line 93 "TP2.y"
+    {  asprintf(&(yyval.vstring), "<%s id=\"%s\">",(yyvsp[(1) - (4)].vstring),(yyvsp[(3) - (4)].vstring));}
     break;
 
   case 20:
-#line 69 "TP2.y"
-    { updateTags((yyvsp[(1) - (3)].vstring)); asprintf(&(yyval.vstring),"<%s class=\"%s\">",(yyvsp[(1) - (3)].vstring),(yyvsp[(2) - (3)].vstring)); }
+#line 94 "TP2.y"
+    {  asprintf(&(yyval.vstring), "<%s class=\"%s\">",(yyvsp[(1) - (3)].vstring),(yyvsp[(2) - (3)].vstring)); }
     break;
 
   case 21:
-#line 70 "TP2.y"
-    { updateTags((yyvsp[(1) - (5)].vstring)); asprintf(&(yyval.vstring),"<%s class=\"%s\"> %s",(yyvsp[(1) - (5)].vstring),(yyvsp[(2) - (5)].vstring),(yyvsp[(4) - (5)].vstring)); }
+#line 95 "TP2.y"
+    {  asprintf(&(yyval.vstring), "<%s class=\"%s\"> %s",(yyvsp[(1) - (5)].vstring),(yyvsp[(2) - (5)].vstring),(yyvsp[(4) - (5)].vstring)); }
     break;
 
   case 22:
-#line 71 "TP2.y"
-    { updateTags((yyvsp[(1) - (10)].vstring)); asprintf(&(yyval.vstring), "<%s id=\"%s\" class=\"%s\" %s> %s", (yyvsp[(1) - (10)].vstring), (yyvsp[(3) - (10)].vstring), (yyvsp[(4) - (10)].vstring), (yyvsp[(6) - (10)].vstring), (yyvsp[(9) - (10)].vstring)); }
+#line 96 "TP2.y"
+    {  asprintf(&(yyval.vstring), "<%s id=\"%s\" class=\"%s\" %s> %s", (yyvsp[(1) - (10)].vstring), (yyvsp[(3) - (10)].vstring), (yyvsp[(4) - (10)].vstring), (yyvsp[(6) - (10)].vstring), (yyvsp[(9) - (10)].vstring)); }
     break;
 
   case 23:
-#line 72 "TP2.y"
-    { updateTags((yyvsp[(1) - (10)].vstring)); asprintf(&(yyval.vstring), "<%s id=\"%s\" class=\"%s\" %s> %s", (yyvsp[(1) - (10)].vstring), (yyvsp[(4) - (10)].vstring), (yyvsp[(2) - (10)].vstring), (yyvsp[(6) - (10)].vstring), (yyvsp[(9) - (10)].vstring)); }
+#line 97 "TP2.y"
+    {  asprintf(&(yyval.vstring), "<%s id=\"%s\" class=\"%s\" %s> %s", (yyvsp[(1) - (10)].vstring), (yyvsp[(4) - (10)].vstring), (yyvsp[(2) - (10)].vstring), (yyvsp[(6) - (10)].vstring), (yyvsp[(9) - (10)].vstring));}
     break;
 
   case 24:
-#line 73 "TP2.y"
-    { updateTags((yyvsp[(1) - (8)].vstring)); asprintf(&(yyval.vstring), "<%s class=\"%s\" %s> %s", (yyvsp[(1) - (8)].vstring), (yyvsp[(2) - (8)].vstring), (yyvsp[(4) - (8)].vstring), (yyvsp[(7) - (8)].vstring)); }
+#line 98 "TP2.y"
+    {  asprintf(&(yyval.vstring), "<%s class=\"%s\" %s> %s", (yyvsp[(1) - (8)].vstring), (yyvsp[(2) - (8)].vstring), (yyvsp[(4) - (8)].vstring), (yyvsp[(7) - (8)].vstring)); }
     break;
 
   case 25:
-#line 74 "TP2.y"
-    { updateTags((yyvsp[(1) - (9)].vstring)); asprintf(&(yyval.vstring), "<%s id=\"%s\" %s> %s", (yyvsp[(1) - (9)].vstring), (yyvsp[(3) - (9)].vstring), (yyvsp[(5) - (9)].vstring), (yyvsp[(8) - (9)].vstring)); }
+#line 99 "TP2.y"
+    {  asprintf(&(yyval.vstring), "<%s id=\"%s\" %s> %s", (yyvsp[(1) - (9)].vstring), (yyvsp[(3) - (9)].vstring), (yyvsp[(5) - (9)].vstring), (yyvsp[(8) - (9)].vstring)); }
     break;
 
   case 26:
-#line 75 "TP2.y"
-    { updateTags((yyvsp[(1) - (6)].vstring)); asprintf(&(yyval.vstring), "<%s class=\"%s\" %s>", (yyvsp[(1) - (6)].vstring), (yyvsp[(2) - (6)].vstring), (yyvsp[(4) - (6)].vstring)); }
+#line 100 "TP2.y"
+    {  asprintf(&(yyval.vstring), "<%s class=\"%s\" %s>", (yyvsp[(1) - (6)].vstring), (yyvsp[(2) - (6)].vstring), (yyvsp[(4) - (6)].vstring)); }
     break;
 
   case 27:
-#line 76 "TP2.y"
-    { updateTags((yyvsp[(1) - (7)].vstring)); asprintf(&(yyval.vstring), "<%s id=\"%s\" %s>", (yyvsp[(1) - (7)].vstring), (yyvsp[(3) - (7)].vstring), (yyvsp[(5) - (7)].vstring)); }
+#line 101 "TP2.y"
+    {  asprintf(&(yyval.vstring), "<%s id=\"%s\" %s>", (yyvsp[(1) - (7)].vstring), (yyvsp[(3) - (7)].vstring), (yyvsp[(5) - (7)].vstring)); }
     break;
 
   case 28:
-#line 77 "TP2.y"
-    { updateTags((yyvsp[(1) - (5)].vstring)); asprintf(&(yyval.vstring),"<%s %s>",(yyvsp[(1) - (5)].vstring), (yyvsp[(3) - (5)].vstring)); }
+#line 102 "TP2.y"
+    {  asprintf(&(yyval.vstring), "<%s %s>",(yyvsp[(1) - (5)].vstring), (yyvsp[(3) - (5)].vstring)); }
     break;
 
   case 29:
-#line 78 "TP2.y"
-    { updateTags((yyvsp[(1) - (7)].vstring)); asprintf(&(yyval.vstring),"<%s %s> %s",(yyvsp[(1) - (7)].vstring), (yyvsp[(3) - (7)].vstring), (yyvsp[(6) - (7)].vstring)); }
+#line 103 "TP2.y"
+    {  asprintf(&(yyval.vstring), "<%s %s> %s",(yyvsp[(1) - (7)].vstring), (yyvsp[(3) - (7)].vstring), (yyvsp[(6) - (7)].vstring));}
     break;
 
   case 30:
-#line 82 "TP2.y"
+#line 107 "TP2.y"
     { asprintf(&(yyval.vstring),"%s %s",(yyvsp[(1) - (3)].vstring), (yyvsp[(3) - (3)].vstring)); }
     break;
 
   case 31:
-#line 83 "TP2.y"
+#line 108 "TP2.y"
     { asprintf(&(yyval.vstring),"%s",(yyvsp[(2) - (2)].vstring)); }
     break;
 
   case 32:
-#line 87 "TP2.y"
+#line 112 "TP2.y"
     { asprintf(&(yyval.vstring),"%s %s",(yyvsp[(1) - (3)].vstring), (yyvsp[(3) - (3)].vstring)); }
     break;
 
   case 33:
-#line 88 "TP2.y"
+#line 113 "TP2.y"
     { asprintf(&(yyval.vstring),"%s",(yyvsp[(1) - (1)].vstring)); }
     break;
 
   case 34:
-#line 92 "TP2.y"
+#line 117 "TP2.y"
     { asprintf(&(yyval.vstring),"%s=\"%s\"",(yyvsp[(1) - (5)].vstring), (yyvsp[(4) - (5)].vstring)); }
     break;
 
   case 35:
-#line 96 "TP2.y"
+#line 121 "TP2.y"
     { asprintf(&(yyval.vstring),"%s %s",(yyvsp[(1) - (3)].vstring), (yyvsp[(3) - (3)].vstring)); }
     break;
 
   case 36:
-#line 97 "TP2.y"
+#line 122 "TP2.y"
     { asprintf(&(yyval.vstring),"%s",(yyvsp[(1) - (1)].vstring)); }
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1595 "y.tab.c"
+#line 1622 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1805,7 +1832,7 @@ yyreturn:
 }
 
 
-#line 100 "TP2.y"
+#line 125 "TP2.y"
 
 
 int main(){
