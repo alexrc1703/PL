@@ -13,6 +13,14 @@ extern char *yytext;
 int yyerror();
 int erroSem(char*);
 
+void closeTags(char *t){
+    printf("closing Tabs!!\n");
+}
+
+void updateTags(char* t){
+    printf("Updating tags lvl array with tag %s \n", t);
+}
+
 
 %}
 %union{
@@ -41,29 +49,33 @@ LineList
 // Linha de código
 Line
     : Tag { asprintf(&$$,"%s",$1); }
-    | tabs Tag { asprintf(&$$,"%s%s",$1,$2); }
-    | tabs '#' string nl{ asprintf(&$$, "%s<div id=\"%s\">",$1 ,$3); }
-    | tabs '#' string '(' PropsList ')' nl{ asprintf(&$$, "%s<div id=\"%s\" %s>",$1 ,$3, $5); }
-    | tabs ClassList nl{ asprintf(&$$, "%s<div class=\"%s\">",$1 ,$2); }
-    | tabs ClassList '(' PropsList ')' nl{ asprintf(&$$, "%s<div class=\"%s\" %s>",$1 ,$2, $4); }
-    | tabs '#' string ClassList { asprintf(&$$, "%s<div id=\"%s\" class=\"%s\">",$1 ,$3, $4); }
-    | tabs ClassList '#' string { asprintf(&$$, "%s<div id=\"%s\" class=\"%s\">",$1 ,$4, $2); }
+    | tabs Tag { closeTags($1); asprintf(&$$,"%s%s",$1,$2); }
+    | tabs '#' string nl{ closeTags($1); char* div="div"; updateTags(div); asprintf(&$$, "%s<div id=\"%s\">",$1 ,$3); }
+    | tabs '#' string '(' PropsList ')' nl{ closeTags($1); char* div="div"; updateTags(div); asprintf(&$$, "%s<div id=\"%s\" %s>",$1 ,$3, $5); }
+    | tabs ClassList nl{ closeTags($1); char* div="div"; updateTags(div); asprintf(&$$, "%s<div class=\"%s\">",$1 ,$2); }
+    | tabs ClassList '(' PropsList ')' nl{ closeTags($1); char* div="div"; updateTags(div); asprintf(&$$, "%s<div class=\"%s\" %s>",$1 ,$2, $4); }
+    | tabs '#' string ClassList nl{ closeTags($1); char* div="div"; updateTags(div); asprintf(&$$, "%s<div id=\"%s\" class=\"%s\">",$1 ,$3, $4); }
+    | tabs ClassList '#' string nl{ closeTags($1); char* div="div"; updateTags(div); asprintf(&$$, "%s<div id=\"%s\" class=\"%s\">",$1 ,$4, $2); }
+    | tabs '#' string ClassList '(' PropsList ')' nl{ closeTags($1); char* div="div"; updateTags(div); asprintf(&$$, "%s<div id=\"%s\" class=\"%s\" %s>",$1 ,$3, $4, $6); }
+    | tabs ClassList '#' string '(' PropsList ')' nl{ closeTags($1); char* div="div"; updateTags(div); asprintf(&$$, "%s<div id=\"%s\" class=\"%s\" %s>",$1 ,$4, $2, $6); }
+    | tabs '#' string ClassList '(' PropsList ')' Text nl{ closeTags($1); char* div="div"; updateTags(div); asprintf(&$$, "%s<div id=\"%s\" class=\"%s\" %s> %s",$1 ,$3, $4, $6, $8); }
+    | tabs ClassList '#' string '(' PropsList ')' Text nl{ closeTags($1); char* div="div"; updateTags(div); asprintf(&$$, "%s<div id=\"%s\" class=\"%s\" %s> %s",$1 ,$4, $2, $6, $8); }
     ;
 
 Tag
-    : string nl{ asprintf(&$$,"<%s>",$1); }
-    | string ' ' Text nl{ asprintf(&$$,"<%s> %s",$1, $3); }
-    | string '#' string nl{ asprintf(&$$,"<%s id=\"%s\">",$1,$3); }
-    | string ClassList nl{ asprintf(&$$,"<%s class=\"%s\">",$1,$2); }
-    | string ClassList ' ' Text nl{ asprintf(&$$,"<%s class=\"%s\"> %s",$1,$2,$4); }
-    | string '#' string ClassList '(' PropsList ')' ' ' Text nl{ asprintf(&$$, "<%s id=\"%s\" class=\"%s\" %s> %s", $1, $3, $4, $6, $9); }
-    | string ClassList '#' string '(' PropsList ')' ' ' Text nl{ asprintf(&$$, "<%s id=\"%s\" class=\"%s\" %s> %s", $1, $4, $2, $6, $9); }
-    | string ClassList '(' PropsList ')' ' ' Text nl{ asprintf(&$$, "<%s class=\"%s\" %s> %s", $1, $2, $4, $7); }
-    | string '#' string '(' PropsList ')' ' ' Text nl{ asprintf(&$$, "<%s id=\"%s\" %s> %s", $1, $3, $5, $8); }
-    | string ClassList '(' PropsList ')' nl{ asprintf(&$$, "<%s class=\"%s\" %s>", $1, $2, $4); }
-    | string '#' string '(' PropsList ')' nl{ asprintf(&$$, "<%s id=\"%s\" %s>", $1, $3, $5); }
-    | string '(' PropsList ')' nl{ asprintf(&$$,"<%s %s>",$1, $3); }
-    | string '(' PropsList ')' ' ' Text nl{ asprintf(&$$,"<%s %s> %s",$1, $3, $6); }
+    : string nl{ updateTags($1); asprintf(&$$,"<%s>",$1); }
+    | string ' ' Text nl{ updateTags($1); asprintf(&$$,"<%s> %s",$1, $3); }
+    | string '#' string nl{ updateTags($1); asprintf(&$$,"<%s id=\"%s\">",$1,$3); }
+    | string ClassList nl{ updateTags($1); asprintf(&$$,"<%s class=\"%s\">",$1,$2); }
+    | string ClassList ' ' Text nl{ updateTags($1); asprintf(&$$,"<%s class=\"%s\"> %s",$1,$2,$4); }
+    | string '#' string ClassList '(' PropsList ')' ' ' Text nl{ updateTags($1); asprintf(&$$, "<%s id=\"%s\" class=\"%s\" %s> %s", $1, $3, $4, $6, $9); }
+    | string ClassList '#' string '(' PropsList ')' ' ' Text nl{ updateTags($1); asprintf(&$$, "<%s id=\"%s\" class=\"%s\" %s> %s", $1, $4, $2, $6, $9); }
+    | string ClassList '(' PropsList ')' ' ' Text nl{ updateTags($1); asprintf(&$$, "<%s class=\"%s\" %s> %s", $1, $2, $4, $7); }
+    | string '#' string '(' PropsList ')' ' ' Text nl{ updateTags($1); asprintf(&$$, "<%s id=\"%s\" %s> %s", $1, $3, $5, $8); }
+    | string ClassList '(' PropsList ')' nl{ updateTags($1); asprintf(&$$, "<%s class=\"%s\" %s>", $1, $2, $4); }
+    | string '#' string '(' PropsList ')' nl{ updateTags($1); asprintf(&$$, "<%s id=\"%s\" %s>", $1, $3, $5); }
+    | string '(' PropsList ')' nl{ updateTags($1); asprintf(&$$,"<%s %s>",$1, $3); }
+    | string '(' PropsList ')' ' ' Text nl{ updateTags($1); asprintf(&$$,"<%s %s> %s",$1, $3, $6); }
     ;
 
 ClassList
