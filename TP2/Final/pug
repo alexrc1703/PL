@@ -1,1 +1,19 @@
-html
+html(lang='en')
+	head
+		title Hello,World!
+		script(type='text/javascript') nao e permitido
+	body
+		nav#navbar-default
+		.container-fluid
+			h1.navbar-header My Website!
+		h1 Hello, World!
+		.remark.class2
+			p Pug rocks!
+		ul
+			li
+				a(href='/' class='cenas') Home
+			li
+				a(href='/page-1') Page 1
+			li
+				a(href='/page-2') Page 2
+		input.search
