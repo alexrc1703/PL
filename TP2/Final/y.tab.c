@@ -108,7 +108,7 @@ char* manageTags(char *tabsR) {
         for(int i = lvl; i >= newLvl; i--){
             for(int j = 0; j < i; j++) t[j]='\t';
             t[i] = '\0';
-            asprintf(&close,"%s%s</ %s>\n",close,t, tagsList[i]);
+            asprintf(&close,"%s%s<\/%s>\n",close,t, tagsList[i]);
         }
     }
     lvl = newLvl;
@@ -127,7 +127,7 @@ char* closeTags() {
     for(int i = lvl; i >= 0; i--){
         for(int j = 0; j < i; j++) t[j]='\t';
         t[i] = '\0';
-        asprintf(&close,"%s%s</ %s>\n",close,t, tagsList[i]);
+        asprintf(&close,"%s%s<\/%s>\n",close,t, tagsList[i]);
     }
     return close;
 }
@@ -1443,7 +1443,7 @@ yyreduce:
     {
         case 2:
 #line 66 "TP2.y"
-    {printf("%s\n%s\n", (yyvsp[(1) - (1)].vstring), closeTags());}
+    {FILE *pr; pr = fopen("pug2html.html","w+"); fprintf(pr,"%s\n%s\n", (yyvsp[(1) - (1)].vstring), closeTags()); fclose(pr);}
     break;
 
   case 3:
